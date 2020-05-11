@@ -1,0 +1,17 @@
+M:\CV\CV\CV\bin\x64\Debug\CV.exe.config
+M:\CV\CV\CV\bin\x64\Debug\CV.exe
+M:\CV\CV\CV\bin\x64\Debug\CV.pdb
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.Blob.dll
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.dll
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.Extensions.dll
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.UserInterface.dll
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.pdb
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.xml
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.Blob.pdb
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.Blob.xml
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.Extensions.pdb
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.Extensions.xml
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.UserInterface.pdb
+M:\CV\CV\CV\bin\x64\Debug\OpenCvSharp.UserInterface.xml
+M:\CV\CV\CV\obj\x64\Debug\CV.exe
+M:\CV\CV\CV\obj\x64\Debug\CV.pdb
