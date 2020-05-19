@@ -1,0 +1,11 @@
+H = 224
+W = 224
+H_Counter = 224
+W_Counter = 224
+EP = 100
+BS_Counter = 64
+BS_Tailor = 1
+Data_Size = 500
+useHisto_Counter = True
+oneHot_Counter = True
+ModelPath_Counter = "TrainedModels\\MLP_COUNT.h5"

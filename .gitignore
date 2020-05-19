@@ -1,0 +1,9 @@
+KG/data.txt
+data.txt
+DL/ObjectDetection/Data4Parser/JPG/
+DL/ObjectDetection/Data4Parser/XML/
+DL/ObjectDetection/DataCache/images_coordinate.pkl
+DL/ObjectDetection/DataCache/images_count.pkl
+*.h5
+DL/ObjectDetection/TrainedModels/VGG16_COORDINATE.h5py/
+*.pkl
