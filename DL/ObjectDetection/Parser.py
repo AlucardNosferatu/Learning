@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 import os
 from PIL import Image
-from Config import H, W, H_Counter, W_Counter, Data_Size, useHisto_Counter, oneHot_Counter
+from Config import H, W, H_Counter, W_Counter, Data_Size, useHisto_Counter, oneHot_Counter, DataFileSize
 from DIP import add_patch, get_patch, Array2Img, getHisto
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -15,17 +15,11 @@ xml_path = path + "\\XML"
 pic_ext = ".jpg"
 
 
-def scan_files(directory, prefix=None, postfix=None):
+def scan_files(directory, prefix="", postfix=""):
     files_list = []
     for root, sub_dirs, files in os.walk(directory):
         for special_file in files:
-            if postfix:
-                if special_file.endswith(postfix):
-                    files_list.append(os.path.join(root, special_file))
-            elif prefix:
-                if special_file.startswith(prefix):
-                    files_list.append(os.path.join(root, special_file))
-            else:
+            if special_file.endswith(postfix) and special_file.startswith(prefix):
                 files_list.append(os.path.join(root, special_file))
     return files_list
 
@@ -302,28 +296,50 @@ def counter_loader(CheckImgs=False, OneHot=oneHot_Counter):
 
 
 def tailor_loader(CheckImgs=False):
-    if os.path.exists('DataCache\\coordinates.pkl'):
-        f = open('DataCache\\coordinates.pkl', 'rb')
-        coordinates = pickle.load(f)
-        f.close()
+    c_flist = scan_files("DataCache", prefix="coordinates", postfix=".pkl")
+    i_flist = scan_files("DataCache", prefix="images_coordinate", postfix=".pkl")
+    coordinates = []
+    if len(c_flist) > 0:
+        for each in tqdm(c_flist):
+            f = open(each, 'rb')
+            temp = pickle.load(f)
+            f.close()
+            coordinates += temp
     else:
         all_objs = get_all_objs()
         coordinates = get_coordinates(all_objs)
-        f = open('DataCache\\coordinates.pkl', 'wb')
-        pickle.dump(coordinates, f)
-        f.close()
+        files_count = int(len(coordinates) / DataFileSize)
+        for i in tqdm(range(0, files_count)):
+            temp = []
+            if i == files_count - 1:
+                temp = coordinates[i * DataFileSize:]
+            else:
+                temp = coordinates[i * DataFileSize:(i + 1) * DataFileSize]
+            f = open('DataCache\\coordinates_' + str(i) + '.pkl', 'wb')
+            pickle.dump(temp, f)
+            f.close()
     coordinates_labels = np.array(coordinates)
-    if os.path.exists('DataCache\\images_coordinate.pkl'):
-        f = open('DataCache\\images_coordinate.pkl', 'rb')
-        imgs = pickle.load(f)
-        f.close()
+    imgs = []
+    if len(i_flist) > 0:
+        for each in tqdm(i_flist):
+            f = open(each, 'rb')
+            temp = pickle.load(f)
+            f.close()
+            imgs += temp
     else:
         imgs = get_images(expand4tailor=True, used_coordinates=coordinates)
-        f = open('DataCache\\images_coordinate.pkl', 'wb')
-        pickle.dump(imgs, f)
-        f.close()
+        files_count = int(len(imgs) / DataFileSize)
+        for i in tqdm(range(0, files_count)):
+            temp = []
+            if i == files_count - 1:
+                temp = imgs[i * DataFileSize:]
+            else:
+                temp = imgs[i * DataFileSize:(i + 1) * DataFileSize]
+            f = open('DataCache\\images_coordinate_' + str(i) + '.pkl', 'wb')
+            pickle.dump(temp, f)
+            f.close()
     images = np.array(imgs)
-    if (CheckImgs):
+    if CheckImgs:
         for i in range(0, len(imgs)):
             print(coordinates[i])
             plt.imshow(imgs[i])
