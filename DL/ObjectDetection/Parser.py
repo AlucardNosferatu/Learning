@@ -203,7 +203,7 @@ def GIE(file_list=None, patch_check=True):
                 c2 = get_coordinate(other)
                 background = add_patch(background, c2)
             background = add_patch(background, c1, source=patch_img)
-            if (patch_check):
+            if patch_check:
                 plt.imshow(background)
                 plt.show()
             img_array = tf.keras.preprocessing.image.img_to_array(background.resize((H, W), Image.ANTIALIAS),
@@ -221,7 +221,7 @@ def get_images(expand4tailor=False, used_coordinates=None, patch_check=False, us
     file_list = scan_files(directory=pic_path, postfix=pic_ext)
     file_list.sort()
     imgs = []
-    if (expand4tailor):
+    if expand4tailor:
         # imgs = GIE_deprecated(file_list=file_list,used_coordinates=used_coordinates,patch_check=patch_check)
         imgs = GIE(file_list=file_list, patch_check=patch_check)
     else:
@@ -229,7 +229,7 @@ def get_images(expand4tailor=False, used_coordinates=None, patch_check=False, us
             img = Image.open(path)
             img = img.convert("RGB")
             img = img.resize((H_Counter, W_Counter), Image.ANTIALIAS)
-            if (useHisto):
+            if useHisto:
                 histo = getHisto(img)
                 imgs.append(histo)
             else:
@@ -279,7 +279,7 @@ def counter_loader(CheckImgs=False, OneHot=oneHot_Counter):
         pickle.dump(counts, f)
         f.close()
     mc = max(counts)
-    if (OneHot):
+    if OneHot:
         length = len(counts)
         counts = count_one_hot(counts, mc)
         counts_labels = np.array(counts).reshape((length, mc))
@@ -287,7 +287,7 @@ def counter_loader(CheckImgs=False, OneHot=oneHot_Counter):
         mc = 1
         counts_labels = np.array(counts).reshape((len(counts), 1))
     images = np.array(imgs)
-    if (CheckImgs):
+    if CheckImgs:
         for i in range(0, len(imgs)):
             print(counts[i])
             plt.imshow(imgs[i])

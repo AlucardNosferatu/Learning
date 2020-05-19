@@ -10,3 +10,4 @@ useHisto_Counter = True
 oneHot_Counter = True
 ModelPath_Counter = "TrainedModels\\MLP_COUNT.h5"
 DataFileSize = 100
+CheckLoss = False

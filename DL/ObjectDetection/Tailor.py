@@ -1,13 +1,16 @@
 import os
-
+import cv2
+import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Add, UpSampling2D, Flatten
-
-from Config import H, W, EP, BS_Tailor
+from RPN_Loss import ROILoss
+from Config import H, W, EP, BS_Tailor, CheckLoss
 from Parser import tailor_loader
+import random
 
+PredictMode = True
 train_images, train_labels = tailor_loader()
 print(train_images.shape)
 print(train_labels.shape)
@@ -86,7 +89,7 @@ class FPN(Model):
 
 
 if os.path.exists("TrainedModels\\VGG16_COORDINATE.h5py"):
-    model = tf.keras.models.load_model("TrainedModels\\VGG16_COORDINATE.h5py")
+    model = tf.keras.models.load_model("TrainedModels\\VGG16_COORDINATE.h5py", custom_objects={'ROILoss': ROILoss})
 else:
     vgg16 = tf.keras.applications.VGG16(weights='imagenet', include_top=True)
     for layer in vgg16.layers:
@@ -108,25 +111,40 @@ else:
     model = Model(inputs=vgg16.input, outputs=X)
     model.compile(
         optimizer=tf.keras.optimizers.Adam(0.0001),
-        loss='mse',
+        loss=ROILoss,
         metrics=['accuracy']
     )
 
-checkpoint = ModelCheckpoint(
-    "TrainedModels\\VGG16_COORDINATE.h5py",
-    monitor='val_loss',
-    verbose=1,
-    save_best_only=False,
-    save_weights_only=False,
-    mode='auto',
-    save_freq='epoch'
-)
-
-with tf.device('/gpu:0'):
-    model.fit(
-        train_images,
-        train_labels,
-        epochs=EP,
-        batch_size=BS_Tailor,
-        callbacks=[checkpoint]
+if PredictMode:
+    index = random.randint(0, len(train_images) - 1)
+    image = train_images[index]
+    result = model.predict(image.reshape((1, 224, 224, 3)))
+    print(result)
+    r_list = list(list(result)[0])
+    x1 = int(r_list[0])
+    y1 = int(r_list[1])
+    x2 = int(r_list[2])
+    y2 = int(r_list[3])
+    cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
+    plt.imshow(image)
+    plt.show()
+else:
+    checkpoint = ModelCheckpoint(
+        "TrainedModels\\VGG16_COORDINATE.h5py",
+        monitor='val_loss',
+        verbose=1,
+        save_best_only=False,
+        save_weights_only=False,
+        mode='auto',
+        save_freq='epoch'
     )
+
+    with tf.device('/gpu:0'):
+        model.fit(
+            train_images,
+            train_labels,
+            epochs=EP,
+            batch_size=BS_Tailor,
+            callbacks=[checkpoint],
+            verbose=int(not CheckLoss)
+        )
