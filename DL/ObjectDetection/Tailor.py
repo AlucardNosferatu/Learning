@@ -10,8 +10,8 @@ from Config import H, W, EP, BS_Tailor, CheckLoss
 from Parser import tailor_loader
 import random
 
-PredictMode = True
-train_images, train_labels = tailor_loader()
+PredictMode = False
+train_images, train_labels = tailor_loader(NoPatch=True)
 print(train_images.shape)
 print(train_labels.shape)
 
@@ -105,7 +105,7 @@ else:
         # p3 p4 p5
         X = Flatten(name='flat_afterFM_' + str(i))(FM_result[i])
         X = Dense(64, activation='relu')(X)
-        X = Dense(4, activation='relu')(X)
+        X = Dense(4)(X)
         ROI_result.append(X)
     X = Add()(ROI_result)
     model = Model(inputs=vgg16.input, outputs=X)
@@ -116,18 +116,23 @@ else:
     )
 
 if PredictMode:
-    index = random.randint(0, len(train_images) - 1)
-    image = train_images[index]
-    result = model.predict(image.reshape((1, 224, 224, 3)))
-    print(result)
-    r_list = list(list(result)[0])
-    x1 = int(r_list[0])
-    y1 = int(r_list[1])
-    x2 = int(r_list[2])
-    y2 = int(r_list[3])
-    cv2.rectangle(image, (x1, y1), (x2, y2), (255, 0, 0), 2)
-    plt.imshow(image)
-    plt.show()
+    while True:
+        index = random.randint(0, len(train_images) - 1)
+        image = train_images[index]
+        result = model.predict(image.reshape((1, 224, 224, 3)))
+        print(result)
+        r_list = list(list(result)[0])
+        x1 = int(r_list[0]*224)
+        y1 = int(r_list[1]*224)
+        x2 = int(r_list[2]*224)
+        y2 = int(r_list[3]*224)
+        image *= 255
+        image = image.astype("uint8")
+        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 1, cv2.LINE_AA)
+        image = cv2.resize(image, (128, 128), interpolation=cv2.INTER_CUBIC)
+        plt.imshow(image)
+        plt.show()
+        plt.close()
 else:
     checkpoint = ModelCheckpoint(
         "TrainedModels\\VGG16_COORDINATE.h5py",
