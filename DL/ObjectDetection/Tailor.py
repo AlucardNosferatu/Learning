@@ -11,7 +11,7 @@ from Parser import tailor_loader
 import random
 
 PredictMode = False
-train_images, train_labels = tailor_loader(NoPatch=True)
+train_images, train_labels = tailor_loader(NoPatch=False)
 print(train_images.shape)
 print(train_labels.shape)
 
@@ -116,8 +116,8 @@ else:
     )
 
 if PredictMode:
-    while True:
-        index = random.randint(0, len(train_images) - 1)
+    index = 0
+    while index < len(train_images):
         image = train_images[index]
         result = model.predict(image.reshape((1, 224, 224, 3)))
         print(result)
@@ -133,6 +133,7 @@ if PredictMode:
         plt.imshow(image)
         plt.show()
         plt.close()
+        index += 1
 else:
     checkpoint = ModelCheckpoint(
         "TrainedModels\\VGG16_COORDINATE.h5py",
