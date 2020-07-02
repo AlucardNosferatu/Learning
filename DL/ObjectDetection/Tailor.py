@@ -1,16 +1,17 @@
 import os
+
 import cv2
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Dropout, Add, UpSampling2D, Flatten
-from RPN_Loss import ROILoss
+
 from Config import H, W, EP, BS_Tailor, CheckLoss
 from Parser import tailor_loader
-import random
+from RPN_Loss import ROILoss
 
-PredictMode = False
+PredictMode = True
 train_images, train_labels = tailor_loader(NoPatch=False)
 print(train_images.shape)
 print(train_labels.shape)

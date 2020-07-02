@@ -149,7 +149,7 @@ def SeqCustomModel(mc):
     return model
 
 
-if (os.path.exists(ModelPath_Counter)):
+if os.path.exists(ModelPath_Counter):
     model = tf.keras.models.load_model(ModelPath_Counter)
 else:
     model = SeqCustomModel(mc)
