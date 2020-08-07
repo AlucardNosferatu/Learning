@@ -82,7 +82,7 @@ Cx Divi(Cx Cx_A, Cx Cx_B) {
     }
 }
 
-void main() {
+void main_Complex() {
     Cx Cx_A = Init(1.0, 2.0);
     Cx Cx_B = Init(3.0, 7.0);
     Cx Cx_C = Divi(Cx_A, Cx_B);
