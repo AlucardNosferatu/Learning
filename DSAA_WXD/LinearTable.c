@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct alist {
 	int n;
@@ -47,14 +48,14 @@ int ListLength(List L) {
 int ListRetrieve(int k, List L) {
 	if (L) {
 		if (ListLength(L) == 0) {
-			return NULL;
+			return -1;
 		}
 		else {
 			return L->table[k];
 		}
 	}
 	else {
-		return NULL;
+		return -1;
 	}
 }
 
@@ -109,22 +110,36 @@ int ListDelete(int k, List L) {
 			return temp;
 		}
 		else {
-			return NULL;
+			return -1;
 		}
 	}
 	else {
-		return NULL;
+		return -1;
+	}
+}
+
+void PrintList(List L) {
+	if (L) {
+		int length = L->n;
+		for (int i = 0; i < length; i++) {
+			printf("%d", L->table[i]);
+			printf(" ");
+		}
+		printf(" End of Table\n");
 	}
 }
 
 void main_LinearTable() {
 	List L = ListInit(10);
-	printf("%d", ListEmpty(L));
+	PrintList(L);
 	ListInsert(0, 5, L);
 	ListInsert(0, 7, L);
 	ListInsert(0, 2, L);
+	PrintList(L);
 	int temp = ListDelete(1, L);
 	ListInsert(1, 11, L);
+	PrintList(L);
 	temp = ListDelete(0, L);
+	PrintList(L);
 	printf("%d", ListEmpty(L));
 }
