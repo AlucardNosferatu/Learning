@@ -6,7 +6,6 @@ typedef struct alist {
 	int maxsize;
 	int *table;
 } Alist;
-
 typedef struct alist* List;
 
 List ListInit(int size) {
@@ -22,6 +21,110 @@ List ListInit(int size) {
 	}
 }
 
+int ListEmpty(List L) {
+	if (L) {
+		if (L->n == 0) {
+			return 0;
+		}
+		else {
+			return 1;
+		}
+	}
+	else {
+		return 0;
+	}
+}
+
+int ListLength(List L) {
+	if (L) {
+		return L->n;
+	}
+	else {
+		return 0;
+	}
+}
+
+int ListRetrieve(int k, List L) {
+	if (L) {
+		if (ListLength(L) == 0) {
+			return NULL;
+		}
+		else {
+			return L->table[k];
+		}
+	}
+	else {
+		return NULL;
+	}
+}
+
+int ListLocate(int x, List L) {
+	if (L) {
+		if (ListLength(L) == 0) {
+			return -1;
+		}
+		else {
+			int length = L->n;
+			for (int i = 0; i < length; i++) {
+				if (L->table[i] == x) {
+					return i;
+				}
+			}
+			return -1;
+		}
+	}
+	else {
+		return -1;
+	}
+}
+
+void ListInsert(int k, int x, List L) {
+	if (L) {
+		int length = L->n;
+		if (length == 0) {
+			L->table[0] = x;
+			L->n = length + 1;
+		}
+		else if ((0 <= k) && (k < length) && (length < (L->maxsize))) {
+			for (int i = length; i > k; i--) {
+				L->table[i] = L->table[i - 1];
+			}
+			L->table[k] = x;
+			L->n = length + 1;
+		}
+	}
+}
+
+int ListDelete(int k, List L) {
+	if (L) {
+		int length = L->n;
+		if ((0 <= k) && (k < length)) {
+			int temp = L->table[k];
+			for (int i = k; i < length; i++) {
+				if ((i + 1) < L->maxsize) {
+					L->table[i] = L->table[i + 1];
+				}
+			}
+			L->n = length - 1;
+			return temp;
+		}
+		else {
+			return NULL;
+		}
+	}
+	else {
+		return NULL;
+	}
+}
+
 void main_LinearTable() {
-	printf("Hello World");
+	List L = ListInit(10);
+	printf("%d", ListEmpty(L));
+	ListInsert(0, 5, L);
+	ListInsert(0, 7, L);
+	ListInsert(0, 2, L);
+	int temp = ListDelete(1, L);
+	ListInsert(1, 11, L);
+	temp = ListDelete(0, L);
+	printf("%d", ListEmpty(L));
 }
