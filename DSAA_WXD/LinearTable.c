@@ -7,10 +7,18 @@ typedef struct alist {
 	int maxsize;
 	int *table;
 } Alist;
-typedef struct alist* List;
+typedef struct alist* ListA;
 
-List ListInit(int size) {
-	List list_p = malloc(sizeof(Alist));
+typedef struct blist {
+	int element;
+	Blist* next;
+} Blist;
+
+typedef struct blist* ListB;
+
+
+ListA ListInit(int size) {
+	ListA list_p = malloc(sizeof(Alist));
 	if (list_p) {
 		list_p->maxsize = size;
 		list_p->n = 0;
@@ -22,7 +30,17 @@ List ListInit(int size) {
 	}
 }
 
-int ListEmpty(List L) {
+ListB ListInit() {
+	ListB list_p = malloc(sizeof(Blist));
+	if (list_p) {
+		return list_p;
+	}
+	else {
+		return NULL;
+	}
+}
+
+int ListEmpty(ListA L) {
 	if (L) {
 		if (L->n == 0) {
 			return 0;
@@ -36,7 +54,7 @@ int ListEmpty(List L) {
 	}
 }
 
-int ListLength(List L) {
+int ListLength(ListA L) {
 	if (L) {
 		return L->n;
 	}
@@ -45,7 +63,7 @@ int ListLength(List L) {
 	}
 }
 
-int ListRetrieve(int k, List L) {
+int ListRetrieve(int k, ListA L) {
 	if (L) {
 		if (ListLength(L) == 0) {
 			return -1;
@@ -59,7 +77,7 @@ int ListRetrieve(int k, List L) {
 	}
 }
 
-int ListLocate(int x, List L) {
+int ListLocate(int x, ListA L) {
 	if (L) {
 		if (ListLength(L) == 0) {
 			return -1;
@@ -79,7 +97,7 @@ int ListLocate(int x, List L) {
 	}
 }
 
-void ListInsert(int k, int x, List L) {
+void ListInsert(int k, int x, ListA L) {
 	if (L) {
 		int length = L->n;
 		if (length == 0) {
@@ -96,7 +114,7 @@ void ListInsert(int k, int x, List L) {
 	}
 }
 
-int ListDelete(int k, List L) {
+int ListDelete(int k, ListA L) {
 	if (L) {
 		int length = L->n;
 		if ((0 <= k) && (k < length)) {
@@ -118,7 +136,7 @@ int ListDelete(int k, List L) {
 	}
 }
 
-void PrintList(List L) {
+void PrintList(ListA L) {
 	if (L) {
 		int length = L->n;
 		for (int i = 0; i < length; i++) {
@@ -130,7 +148,7 @@ void PrintList(List L) {
 }
 
 void main_LinearTable() {
-	List L = ListInit(10);
+	ListA L = ListInit(10);
 	PrintList(L);
 	ListInsert(0, 5, L);
 	ListInsert(0, 7, L);
