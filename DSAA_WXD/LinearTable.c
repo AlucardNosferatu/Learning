@@ -13,8 +13,14 @@ typedef struct blist {
 	int element;
 	struct blist* next;
 } Blist;
-
 typedef struct blist* ListB;
+
+typedef struct clist {
+	int n;
+	int maxsize;
+	int** table;
+} Clist;
+typedef struct clist* ListC;
 
 
 ListA ListInitA(int size) {
@@ -35,6 +41,20 @@ ListB ListInitB() {
 	if (list_p) {
 		list_p->element = 0;
 		list_p->next = NULL;
+		return list_p;
+	}
+	else {
+		return NULL;
+	}
+}
+
+ListC ListInitC(int size) {
+	ListC list_p = malloc(sizeof(Clist));
+	if (list_p) {
+		list_p->maxsize = size;
+		list_p->n = 0;
+		list_p->table = malloc(list_p->maxsize * sizeof(int*));
+		memset(list_p->table, NULL, (list_p->maxsize * sizeof(int*)));
 		return list_p;
 	}
 	else {
@@ -70,6 +90,10 @@ int ListEmptyB(ListB L) {
 	}
 }
 
+int ListEmptyC(ListC L) {
+	return L->n == 0;
+}
+
 int ListLengthA(ListA L) {
 	if (L) {
 		return L->n;
@@ -100,6 +124,15 @@ int ListLengthB(ListB L) {
 	}
 	else {
 		return -1;
+	}
+}
+
+int ListLengthC(ListC L) {
+	if (L) {
+		return L->n;
+	}
+	else {
+		return 0;
 	}
 }
 
@@ -137,6 +170,10 @@ int ListRetrieveB(int k, ListB L) {
 	else {
 		return 0;
 	}
+}
+
+int ListRetrieveC(int k, ListC L) {
+	return *(L->table[k]);
 }
 
 int ListLocateA(int x, ListA L) {
@@ -181,10 +218,20 @@ int ListLocateB(int x, ListB L) {
 				return -1;
 			}
 		}
+		return -1;
 	}
 	else {
 		return -1;
 	}
+}
+
+int ListLocateC(int x, ListC L) {
+	for (int i = 0; i < L->n; i++) {
+		if (*(L->table[i]) == x) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 void ListInsertA(int k, int x, ListA L) {
@@ -224,6 +271,17 @@ void ListInsertB(int k, int x, ListB L) {
 			}
 		}
 	}
+}
+
+void ListInsertC(int k, int x, ListC L) {
+	for (int i = L->n + 1; i > k; i--) {
+		L->table[i] = L->table[i - 1];
+	}
+	L->table[k] = malloc(sizeof(int));
+	if (L->table[k]) {
+		*(L->table[k]) = x;
+	}
+	L->n += 1;
 }
 
 int ListDeleteA(int k, ListA L) {
@@ -268,10 +326,23 @@ int ListDeleteB(int k, ListB L) {
 			free(deleted);
 			return temp;
 		}
+		else {
+			return 0;
+		}
 	}
 	else {
 		return 0;
 	}
+}
+
+int ListDeleteC(int k, ListC L) {
+	int temp = *(L->table[k]);
+	for (int i = k; i < L->n-1; i++) {
+		L->table[i] = L->table[i + 1];
+	}
+	L->table[L->n - 1] = NULL;
+	L->n -= 1;
+	return temp;
 }
 
 void PrintListA(ListA L) {
@@ -299,14 +370,9 @@ void PrintListB(ListB L) {
 }
 
 void main_LinearTable() {
-	ListB L = ListInitB();
-	ListInsertB(0, 2029, L);
-	PrintListB(L);
-	ListInsertB(1, 12, L);
-	ListInsertB(2, 24, L);
-	PrintListB(L);
-	int result = ListDeleteB(1, L);
-	PrintListB(L);
-	ListInsertB(0, 1314, L);
-	PrintListB(L);
+	ListC L = ListInitC(10);
+	ListInsertC(0, 24, L);
+	ListInsertC(0, 12, L);
+	ListInsertC(0, 2029, L);
+	ListDeleteC(1, L);
 }
