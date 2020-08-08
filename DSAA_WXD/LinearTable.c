@@ -54,8 +54,13 @@ ListC ListInitC(int size) {
 		list_p->maxsize = size;
 		list_p->n = 0;
 		list_p->table = malloc(list_p->maxsize * sizeof(int*));
-		memset(list_p->table, NULL, (list_p->maxsize * sizeof(int*)));
-		return list_p;
+		if (list_p->table) {
+			memset(list_p->table, NULL, (list_p->maxsize * sizeof(int*)));
+			return list_p;
+		}
+		else {
+			return NULL;
+		}
 	}
 	else {
 		return NULL;
