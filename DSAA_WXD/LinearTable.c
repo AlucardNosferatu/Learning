@@ -11,13 +11,13 @@ typedef struct alist* ListA;
 
 typedef struct blist {
 	int element;
-	Blist* next;
+	struct blist* next;
 } Blist;
 
 typedef struct blist* ListB;
 
 
-ListA ListInit(int size) {
+ListA ListInitA(int size) {
 	ListA list_p = malloc(sizeof(Alist));
 	if (list_p) {
 		list_p->maxsize = size;
@@ -30,9 +30,11 @@ ListA ListInit(int size) {
 	}
 }
 
-ListB ListInit() {
+ListB ListInitB() {
 	ListB list_p = malloc(sizeof(Blist));
 	if (list_p) {
+		list_p->element = 0;
+		list_p->next = NULL;
 		return list_p;
 	}
 	else {
@@ -40,7 +42,7 @@ ListB ListInit() {
 	}
 }
 
-int ListEmpty(ListA L) {
+int ListEmptyA(ListA L) {
 	if (L) {
 		if (L->n == 0) {
 			return 0;
@@ -54,7 +56,21 @@ int ListEmpty(ListA L) {
 	}
 }
 
-int ListLength(ListA L) {
+int ListEmptyB(ListB L) {
+	if (L) {
+		if ((L->next) && (L->element)) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
+	else {
+		return 0;
+	}
+}
+
+int ListLengthA(ListA L) {
 	if (L) {
 		return L->n;
 	}
@@ -63,9 +79,33 @@ int ListLength(ListA L) {
 	}
 }
 
-int ListRetrieve(int k, ListA L) {
+int ListLengthB(ListB L) {
 	if (L) {
-		if (ListLength(L) == 0) {
+		int count = 0;
+		while (L) {
+			if (L->element) {
+				count += 1;
+				if (L->next) {
+					L = L->next;
+				}
+				else {
+					return count;
+				}
+			}
+			else {
+				break;
+			}
+		}
+		return count;
+	}
+	else {
+		return -1;
+	}
+}
+
+int ListRetrieveA(int k, ListA L) {
+	if (L) {
+		if (ListLengthA(L) == 0) {
 			return -1;
 		}
 		else {
@@ -77,9 +117,31 @@ int ListRetrieve(int k, ListA L) {
 	}
 }
 
-int ListLocate(int x, ListA L) {
+int ListRetrieveB(int k, ListB L) {
 	if (L) {
-		if (ListLength(L) == 0) {
+		for (int i = 0; i < k; i++) {
+			if (L->next) {
+				L = L->next;
+			}
+			else {
+				return 0;
+			}
+		}
+		if (L->element) {
+			return L->element;
+		}
+		else {
+			return 0;
+		}
+	}
+	else {
+		return 0;
+	}
+}
+
+int ListLocateA(int x, ListA L) {
+	if (L) {
+		if (ListLengthA(L) == 0) {
 			return -1;
 		}
 		else {
@@ -97,7 +159,35 @@ int ListLocate(int x, ListA L) {
 	}
 }
 
-void ListInsert(int k, int x, ListA L) {
+int ListLocateB(int x, ListB L) {
+	if (L) {
+		int index = 0;
+		while (L) {
+			if (L->element) {
+				if (L->element == x) {
+					return index;
+				}
+				else {
+					if (L->next) {
+						L = L->next;
+						index += 1;
+					}
+					else {
+						return -1;
+					}
+				}
+			}
+			else {
+				return -1;
+			}
+		}
+	}
+	else {
+		return -1;
+	}
+}
+
+void ListInsertA(int k, int x, ListA L) {
 	if (L) {
 		int length = L->n;
 		if (length == 0) {
@@ -114,7 +204,29 @@ void ListInsert(int k, int x, ListA L) {
 	}
 }
 
-int ListDelete(int k, ListA L) {
+void ListInsertB(int k, int x, ListB L) {
+	if (L) {
+		ListB nextL = malloc(sizeof(Blist));
+		if (nextL) {
+			if (k > 0) {
+				nextL->element = x;
+				for (int i = 0; i < (k - 1); i++) {
+					L = L->next;
+				}
+				nextL->next = L->next;
+				L->next = nextL;
+			}
+			else if (k == 0) {
+				nextL->element = L->element;
+				L->element = x;
+				nextL->next = L->next;
+				L->next = nextL;
+			}
+		}
+	}
+}
+
+int ListDeleteA(int k, ListA L) {
 	if (L) {
 		int length = L->n;
 		if ((0 <= k) && (k < length)) {
@@ -136,7 +248,33 @@ int ListDelete(int k, ListA L) {
 	}
 }
 
-void PrintList(ListA L) {
+int ListDeleteB(int k, ListB L) {
+	if (L) {
+		if (k > 0) {
+			for (int i = 0; i < k - 1; i++) {
+				L = L->next;
+			}
+			int temp = L->next->element;
+			ListB deleted = L->next;
+			L->next = L->next->next;
+			free(deleted);
+			return temp;
+		}
+		else if (k == 0) {
+			int temp = L->element;
+			L->element = L->next->element;
+			ListB deleted = L->next;
+			L->next = L->next->next;
+			free(deleted);
+			return temp;
+		}
+	}
+	else {
+		return 0;
+	}
+}
+
+void PrintListA(ListA L) {
 	if (L) {
 		int length = L->n;
 		for (int i = 0; i < length; i++) {
@@ -147,17 +285,28 @@ void PrintList(ListA L) {
 	}
 }
 
+void PrintListB(ListB L) {
+	if (L) {
+		while (L) {
+			if(L->element){
+				printf("%d", L->element);
+				printf(" ");
+			}
+			L = L->next;
+		}
+		printf(" End of Table\n");
+	}
+}
+
 void main_LinearTable() {
-	ListA L = ListInit(10);
-	PrintList(L);
-	ListInsert(0, 5, L);
-	ListInsert(0, 7, L);
-	ListInsert(0, 2, L);
-	PrintList(L);
-	int temp = ListDelete(1, L);
-	ListInsert(1, 11, L);
-	PrintList(L);
-	temp = ListDelete(0, L);
-	PrintList(L);
-	printf("%d", ListEmpty(L));
+	ListB L = ListInitB();
+	ListInsertB(0, 2029, L);
+	PrintListB(L);
+	ListInsertB(1, 12, L);
+	ListInsertB(2, 24, L);
+	PrintListB(L);
+	int result = ListDeleteB(1, L);
+	PrintListB(L);
+	ListInsertB(0, 1314, L);
+	PrintListB(L);
 }
