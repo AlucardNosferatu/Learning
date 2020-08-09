@@ -8,7 +8,17 @@ typedef struct astack {
 } Astack;
 typedef struct astack* StackA;
 
-StackA InitStack(int size) {
+typedef struct bstack {
+	int element;
+	struct bstack* next;
+} Bstack;
+typedef struct bs_first {
+	Bstack* next;
+} Bstack_f;
+typedef struct bs_first* StackB;
+
+
+StackA InitStackA(int size) {
 	StackA S = malloc(sizeof(Astack));
 	if (S) {
 		S->maxtop = size;
@@ -21,16 +31,40 @@ StackA InitStack(int size) {
 	}
 }
 
-int StackEmpty(StackA S) {
+StackB InitStackB() {
+	StackB S = malloc(sizeof(StackB));
+	if (S) {
+		S->next = NULL;
+		return S;
+	}
+	else {
+		return NULL;
+	}
+}
+
+int StackEmptyA(StackA S) {
 	return S->top < 0;
 }
 
-int StackFull(StackA S){
+int StackEmptyB(StackB S) {
+	return S->next == NULL;
+}
+
+int StackFullA(StackA S){
 	return S->top >= S->maxtop - 1;
 }
 
-int StackTop(StackA S) {
-	if (StackEmpty(S)) {
+int StackFullB() {
+	Bstack* S_p;
+	int result = (S_p = malloc(sizeof(Bstack)));
+	if (result) {
+		free(S_p);
+	}
+	return result;
+}
+
+int StackTopA(StackA S) {
+	if (StackEmptyA(S)) {
 		return 0;
 	}
 	else {
@@ -38,15 +72,36 @@ int StackTop(StackA S) {
 	}
 }
 
-void Push(int x, StackA S) {
-	if (!StackFull(S)) {
+int StackTopB(StackB S) {
+	if (!StackEmptyB(S)) {
+		return S->next->element;
+	}
+	else {
+		return 0;
+	}
+}
+
+void PushA(int x, StackA S) {
+	if (!StackFullA(S)) {
 		S->top += 1;
 		S->data[S->top] = x;
 	}
 }
 
-int Pop(StackA S) {
-	if (StackEmpty(S)) {
+void PushB(int x, StackB S) {
+	if (!StackFullB()) {
+		Bstack* prev_first = S->next;
+		Bstack* new_first = malloc(sizeof(Bstack));
+		if (new_first) {
+			new_first->element = x;
+			new_first->next = prev_first;
+			S->next = new_first;
+		}
+	}
+}
+
+int PopA(StackA S) {
+	if (StackEmptyA(S)) {
 		return 0;
 	}
 	else {
@@ -58,19 +113,19 @@ int Pop(StackA S) {
 
 }
 
+int PopB(StackB S) {
+	if (!StackEmptyB(S)) {
+		Bstack* prev_first = S->next;
+		S->next = S->next->next;
+		int temp = prev_first->element;
+		free(prev_first);
+		return temp;
+	}
+	else {
+		return 0;
+	}
+}
+
 void main_Stack() {
-	StackA S = InitStack(6);
-	int result = StackEmpty(S);
-	Push(2016, S);
-	Push(7, S);
-	Push(12, S);
-	result = Pop(S);
-	result = Pop(S);
-	result = Pop(S);
-	Push(2029, S);
-	Push(12, S);
-	Push(24, S);
-	Push(14, S);
-	Push(13, S);
-	Push(520, S);
+
 }
