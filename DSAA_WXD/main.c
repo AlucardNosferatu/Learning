@@ -2,5 +2,5 @@
 #include <stdlib.h>
 
 void main() {
-	main_Stack();
+	main_Queue();
 }

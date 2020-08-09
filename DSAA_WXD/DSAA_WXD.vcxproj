@@ -22,6 +22,7 @@
     <ClCompile Include="Complex.c" />
     <ClCompile Include="LinearTable.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="Queue.c" />
     <ClCompile Include="Stack.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
