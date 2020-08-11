@@ -52,10 +52,25 @@ void perm(int list[], int k, int m, int length) {
 	}
 }
 
+void decom(int n, int prev) {
+	if (n <= 1) {
+		printf("\n");
+	}
+	else {
+		for (int i = n - 1; i >= 1; i--) {
+			if (prev != 0) {
+				printf("\n %d", prev);
+			}
+			printf(" %d %d", i, n - i);
+			decom(n - i, i);
+		}
+	}
+}
 
 void main_Recursion() {
 	int result = factorial(7);
 	result = Fibonacci(9);
 	int list[5] = { 0,1,2,3,4 };
 	perm(list, 1, 3, 5);
+	decom(6, 0);
 }
