@@ -23,6 +23,7 @@
     <ClCompile Include="LinearTable.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="Queue.c" />
+    <ClCompile Include="Recursion.c" />
     <ClCompile Include="Stack.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

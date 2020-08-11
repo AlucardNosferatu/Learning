@@ -30,5 +30,8 @@
     <ClCompile Include="Queue.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Recursion.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

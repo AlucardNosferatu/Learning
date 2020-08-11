@@ -2,5 +2,5 @@
 #include <stdlib.h>
 
 void main() {
-	main_Queue();
+	main_Recursion();
 }
