@@ -73,6 +73,22 @@ def decompose(n, list_prev):
             list_prev.pop(-1)
 
 
+def decompose_dp(n, m, memo):
+    if m == 1:
+        temp = [1] * n
+        memo[m] = [temp]
+    else:
+        temp = []
+        while n > m:
+            temp.append(m)
+            n -= m
+        temp.append(n)
+
+
+def decompose_dfs():
+    pass
+
+
 if __name__ == "__main__":
     # decompose_junk(6, 6, [])
     decompose(6, [])
