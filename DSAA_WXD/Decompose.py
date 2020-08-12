@@ -73,7 +73,7 @@ def decompose(n, list_prev):
             list_prev.pop(-1)
 
 
-def decompose_dp(n,bf=False):
+def decompose_dp(n, bf=False):
     n += 1
     dp = {1: [[1]]}
     for i in range(2, n):
@@ -85,6 +85,7 @@ def decompose_dp(n,bf=False):
             added.append(j)
             prev = dp[i - j].copy()
             if bf:
+                # region Brutal Enumeration with merging sets
                 for k in range(len(prev)):
                     prev[k] = prev[k] + [j]
                     prev[k].sort()
@@ -92,9 +93,9 @@ def decompose_dp(n,bf=False):
                 dp_t = set([tuple(item) for item in dp[i]])
                 dp_t = dp_t.union(prev_t)
                 dp[i] = [list(item) for item in list(dp_t)]
+                # endregion
             else:
-                if j==1:
-                    dp[i]+=prev_t
+                pass
     return dp
 
 
