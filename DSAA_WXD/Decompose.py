@@ -73,9 +73,9 @@ def decompose(n, list_prev):
             list_prev.pop(-1)
 
 
-def decompose_dp(n):
-    dp = {}
-    dp[1] = [[1]]
+def decompose_dp(n,bf=False):
+    n += 1
+    dp = {1: [[1]]}
     for i in range(2, n):
         dp[i] = [[i]]
         added = []
@@ -83,11 +83,19 @@ def decompose_dp(n):
             if i - j in added:
                 continue
             added.append(j)
-            prev = dp[i - j]
-            prev = [i + [j] for i in prev]
-            dp[i] += prev
-
-
+            prev = dp[i - j].copy()
+            if bf:
+                for k in range(len(prev)):
+                    prev[k] = prev[k] + [j]
+                    prev[k].sort()
+                prev_t = set([tuple(item) for item in prev])
+                dp_t = set([tuple(item) for item in dp[i]])
+                dp_t = dp_t.union(prev_t)
+                dp[i] = [list(item) for item in list(dp_t)]
+            else:
+                if j==1:
+                    dp[i]+=prev_t
+    return dp
 
 
 def decompose_dfs():
@@ -96,4 +104,5 @@ def decompose_dfs():
 
 if __name__ == "__main__":
     # decompose_junk(6, 6, [])
-    decompose_dp(7)
+    decompose_6 = decompose_dp(6)
+    print("Done")
