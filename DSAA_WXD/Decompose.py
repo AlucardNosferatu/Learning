@@ -36,7 +36,7 @@ def decompose_junk(n, m, list_prev):
 
 
 # Remove m
-def decompose(n, list_prev):
+def decompose_old(n, list_prev):
     if len(list_prev) == 0:
         all_comb.append([n])
     if n == 1:
@@ -55,12 +55,24 @@ def decompose(n, list_prev):
             if temp_list not in all_comb:
                 all_comb.append(temp_list)
             list_prev.pop(-1)
-            decompose(n - temp, list_prev.copy())
+            decompose_old(n - temp, list_prev.copy())
+            list_prev.pop(-1)
+
+
+def decompose(n, list_prev):
+    if n == 1 or (len(list_prev) == 0 or (len(list_prev) != 0 and list_prev[-1] >= n)):
+        list_prev.append(n)
+        print(list_prev)
+        if n != 1:
+            list_prev.pop(-1)
+    for i in range(1, n):
+        temp = n - i
+        if len(list_prev) == 0 or (list_prev[-1] >= temp):
+            list_prev.append(temp)
+            decompose(i, list_prev.copy())
             list_prev.pop(-1)
 
 
 if __name__ == "__main__":
     # decompose_junk(6, 6, [])
     decompose(6, [])
-    for each in all_comb:
-        print(each)
