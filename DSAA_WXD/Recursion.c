@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "LinkTable.c"
 
 int factorial(int n) {
 	//初始情况需要根据n变化方向、变化步长的最大值来决定
@@ -52,25 +53,40 @@ void perm(int list[], int k, int m, int length) {
 	}
 }
 
-void decom(int n, int prev) {
-	if (n <= 1) {
-		printf("\n");
-	}
-	else {
-		for (int i = n - 1; i >= 1; i--) {
-			if (prev != 0) {
-				printf("\n %d", prev);
-			}
-			printf(" %d %d", i, n - i);
-			decom(n - i, i);
+int LinkLength(NodeP NP,int count) {
+	if (NP) {
+		count += 1;
+		if (NP->next) {
+			count = LinkLength(NP->next, count);
 		}
 	}
+	return count;
+}
+
+NodeP GenTestLink(int length) {
+	NodeP NP = malloc(sizeof(Node));
+	NodeP Temp = malloc(sizeof(Node));
+	if (NP) {
+		NP->value = -1;
+		if (Temp) {
+			NP->next = Temp;
+			Temp->value = 0;
+			if (length > 2) {
+				for (int i = 0; i < length - 2; i++) {
+					Temp->next = malloc(sizeof(Node));
+					if (Temp->next) {
+						Temp = Temp->next;
+						Temp->value = i + 1;
+						Temp->next = NULL;
+					}
+				}
+			}
+		}
+	}
+	return NP;
 }
 
 void main_Recursion() {
-	int result = factorial(7);
-	result = Fibonacci(9);
-	int list[5] = { 0,1,2,3,4 };
-	perm(list, 1, 3, 5);
-	decom(6, 0);
+	NodeP NP = GenTestLink(9);
+	int result = LinkLength(NP, 0);
 }

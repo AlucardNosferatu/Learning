@@ -20,7 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Complex.c" />
+    <ClCompile Include="DivideAndConquer.c" />
     <ClCompile Include="LinearTable.c" />
+    <ClCompile Include="LinkTable.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="Queue.c" />
     <ClCompile Include="Recursion.c" />
