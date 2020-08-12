@@ -95,7 +95,8 @@ def decompose_dp(n, bf=False):
                 dp[i] = [list(item) for item in list(dp_t)]
                 # endregion
             else:
-                pass
+                prev = [item + [j] for item in prev]
+                dp[i] += prev
     return dp
 
 
