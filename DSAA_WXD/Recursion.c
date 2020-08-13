@@ -54,7 +54,7 @@ void perm(int list[], int k, int m, int length) {
 }
 
 int LinkLength(NodeP NP,int count) {
-	if (NP) {
+	if ((NP) && (NP->value)) {
 		count += 1;
 		if (NP->next) {
 			count = LinkLength(NP->next, count);

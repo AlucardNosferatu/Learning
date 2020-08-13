@@ -9,6 +9,7 @@ def save(list_prev):
         all_comb.append(list_prev)
 
 
+# First version
 def decompose_junk(n, m, list_prev):
     if len(list_prev) == 0 and n <= m:
         list_prev.append(n)
@@ -59,7 +60,8 @@ def decompose_old(n, list_prev):
             list_prev.pop(-1)
 
 
-def decompose(n, list_prev):
+# Simplify code
+def decompose_recursive(n, list_prev):
     if n == 1 or (len(list_prev) == 0 or (len(list_prev) != 0 and list_prev[-1] >= n)):
         list_prev.append(n)
         print(list_prev)
@@ -69,7 +71,7 @@ def decompose(n, list_prev):
         temp = n - i
         if len(list_prev) == 0 or (list_prev[-1] >= temp):
             list_prev.append(temp)
-            decompose(i, list_prev.copy())
+            decompose_recursive(i, list_prev.copy())
             list_prev.pop(-1)
 
 

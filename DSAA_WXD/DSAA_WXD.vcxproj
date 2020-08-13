@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Complex.c" />
+    <ClCompile Include="Decompose.c" />
     <ClCompile Include="DivideAndConquer.c" />
     <ClCompile Include="LinearTable.c" />
     <ClCompile Include="LinkTable.c" />

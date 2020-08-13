@@ -39,5 +39,8 @@
     <ClCompile Include="DivideAndConquer.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Decompose.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
