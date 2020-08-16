@@ -227,16 +227,69 @@ def sort_heap(input_list):
     return list_o
 
 
+def counting(input_list):
+    max_temp = max(input_list)
+    min_temp = min(input_list)
+    count_list = []
+    for i in range(min_temp, max_temp + 1):
+        count_list.append(0)
+    for i in range(len(input_list)):
+        count_list[input_list[i] - min_temp] += 1
+    out_list = []
+    for i in range(min_temp, max_temp + 1):
+        for j in range(count_list[i - min_temp]):
+            out_list.append(i)
+    return out_list
+
+
+def bucket(i_list):
+    input_list = i_list.copy()
+    if len(input_list) == 1:
+        return input_list
+    elif len(input_list) == 2:
+        if input_list[0] > input_list[1]:
+            return [input_list[1], input_list[0]]
+        else:
+            return input_list
+    else:
+        buckets_count = 3
+        max_temp = max(input_list)
+        min_temp = min(input_list)
+        delta = max_temp - min_temp
+        interval_length = int(delta / buckets_count) + 1
+        buckets = []
+        for i in range(buckets_count):
+            temp = []
+            buckets.append(temp)
+        while len(input_list) > 0:
+            temp = input_list.pop(0)
+            bound_temp = min_temp
+            for i in range(buckets_count):
+                lb = bound_temp
+                up = lb + interval_length
+                bound_temp = up
+                if lb <= temp < up:
+                    buckets[i].append(temp)
+                    break
+        out_list = []
+        for i in range(buckets_count):
+            out_list += bucket(buckets[i])
+
+    return out_list
+
+
 if __name__ == "__main__":
     il = []
     for z in range(10):
         r = random.randint(0, 100)
         il.append(r)
+    # il = [19, 72, 26, 25, 24, 90, 71, 83, 3, 87]
     print(il)
     # result = bubble(il)
     # result = insertion(il)
     # result = selection(il)
     # result = merge(il)
-    # il = [19, 72, 26, 25, 24, 90, 71, 83, 3, 87]
-    result = sort_heap(il)
+    # result = sort_heap(il)
+    # result = counting(il)
+    result = bucket(il)
     print(result)
