@@ -209,14 +209,61 @@ def travel_all_nodes(root_node, pre_order, in_order, post_order):
     return pre_order, in_order, post_order
 
 
+def build_tree_from(root_node, in_order, another_order, mode='pre_order'):
+    temp_node = root_node
+    if mode == 'pre_order':
+        temp_node.set_value(another_order[0])
+        root_index = in_order.index(another_order[0])
+        if len(in_order[:root_index]) > 0:
+            temp_node.init_left_child()
+            build_tree_from(
+                temp_node.get_left_child(),
+                in_order[:root_index],
+                another_order[1:][:root_index],
+                mode=mode
+            )
+        if len(in_order[root_index + 1:]) > 0:
+            temp_node.init_right_child()
+            build_tree_from(
+                temp_node.get_right_child(),
+                in_order[root_index + 1:],
+                another_order[1:][root_index:],
+                mode=mode
+            )
+    elif mode == 'post_order':
+        temp_node.set_value(another_order[-1])
+        root_index = in_order.index(another_order[-1])
+        if len(in_order[:root_index]) > 0:
+            temp_node.init_left_child()
+            build_tree_from(
+                temp_node.get_left_child(),
+                in_order[:root_index],
+                another_order[:-1][:root_index],
+                mode=mode
+            )
+        if len(in_order[root_index + 1:]) > 0:
+            temp_node.init_right_child()
+            build_tree_from(
+                temp_node.get_right_child(),
+                in_order[root_index + 1:],
+                another_order[:-1][root_index:],
+                mode=mode
+            )
+    return root_node
+
+
 if __name__ == "__main__":
     il = []
     for z in range(10):
         r = random.randint(0, 100)
+        while r in il:
+            r = random.randint(0, 100)
         il.append(r)
-    # il = [26, 59, 98, 57, 82, 84, 10, 58, 8, 84]
-    # result = build_a_full_tree(il)
+    il = [66, 13, 43, 97, 0, 36, 8, 34, 63, 35]
+    result = build_a_full_tree(il)
     # result = build_a_heap(il)
-    result = build_a_bst(il)
+    # result = build_a_bst(il)
     pre, in_o, post = travel_all_nodes(result, [], [], [])
+    rebuild = BtNode(0)
+    rebuild = build_tree_from(rebuild, in_o, pre, mode='pre_order')
     print("Done")
