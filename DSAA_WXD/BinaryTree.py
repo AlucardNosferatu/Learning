@@ -135,27 +135,78 @@ def build_a_bst(i_list):
     return root_node
 
 
-def travel_all_nodes(root_node, first_time, last_time):
+def travel_all_nodes(root_node, pre_order, in_order, post_order):
     root_node.travel_count += 1
     if root_node.travel_count == 1:
-        first_time.append(root_node.get_value())
-        if not root_node.is_left_empty():
-            first_time, last_time = travel_all_nodes(root_node.get_left_child(), first_time, last_time)
+        pre_order.append(root_node.get_value())
+        if root_node.is_left_empty():
+            if root_node.is_right_empty():
+                post_order.append(root_node.get_value())
+                in_order.append(root_node.get_value())
+                pre_order, in_order, post_order = travel_all_nodes(
+                    root_node.get_parent(),
+                    pre_order,
+                    in_order,
+                    post_order
+                )
+            else:
+                pre_order, in_order, post_order = travel_all_nodes(
+                    root_node.get_right_child(),
+                    pre_order,
+                    in_order,
+                    post_order
+                )
         else:
-            last_time.append(root_node.get_value())
-            first_time, last_time = travel_all_nodes(root_node.get_parent(), first_time, last_time)
+            pre_order, in_order, post_order = travel_all_nodes(
+                root_node.get_left_child(),
+                pre_order,
+                in_order,
+                post_order
+            )
     elif root_node.travel_count == 2:
-        if not root_node.is_right_empty():
-            first_time, last_time = travel_all_nodes(root_node.get_right_child(), first_time, last_time)
+        if root_node.is_left_empty():
+            if root_node.is_right_empty():
+                raise ValueError("It's impossible to travel a leaf second time.")
+            else:
+                in_order.append(root_node.get_value())
+                post_order.append(root_node.get_value())
+                pre_order, in_order, post_order = travel_all_nodes(
+                    root_node.get_parent(),
+                    pre_order,
+                    in_order,
+                    post_order
+                )
         else:
-            last_time.append(root_node.get_value())
-            first_time, last_time = travel_all_nodes(root_node.get_parent(), first_time, last_time)
+            in_order.append(root_node.get_value())
+            if root_node.is_right_empty():
+                post_order.append(root_node.get_value())
+                pre_order, in_order, post_order = travel_all_nodes(
+                    root_node.get_parent(),
+                    pre_order,
+                    in_order,
+                    post_order
+                )
+            else:
+                pre_order, in_order, post_order = travel_all_nodes(
+                    root_node.get_right_child(),
+                    pre_order,
+                    in_order,
+                    post_order
+                )
     elif root_node.travel_count == 3:
-        last_time.append(root_node.get_value())
+        post_order.append(root_node.get_value())
         if root_node.get_parent() is None:
-            return first_time, last_time
-        first_time, last_time = travel_all_nodes(root_node.get_parent(), first_time, last_time)
-    return first_time, last_time
+            return pre_order, in_order, post_order
+        pre_order, in_order, post_order = travel_all_nodes(
+            root_node.get_parent(),
+            pre_order,
+            in_order,
+            post_order
+        )
+    else:
+        raise ValueError("")
+
+    return pre_order, in_order, post_order
 
 
 if __name__ == "__main__":
@@ -163,9 +214,9 @@ if __name__ == "__main__":
     for z in range(10):
         r = random.randint(0, 100)
         il.append(r)
-    il = [26, 59, 98, 57, 82, 84, 10, 58, 8, 84]
-    result = build_a_full_tree(il)
+    # il = [26, 59, 98, 57, 82, 84, 10, 58, 8, 84]
+    # result = build_a_full_tree(il)
     # result = build_a_heap(il)
-    # result = build_a_bst(il)
-    ft, lt = travel_all_nodes(result, [], [])
+    result = build_a_bst(il)
+    pre, in_o, post = travel_all_nodes(result, [], [], [])
     print("Done")
