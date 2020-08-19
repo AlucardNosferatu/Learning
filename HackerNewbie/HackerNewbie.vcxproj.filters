@@ -18,5 +18,17 @@
     <ClCompile Include="HackerNewbie.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DSAA.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="I_am_a_student.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="star_tower.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="sphere_surface.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

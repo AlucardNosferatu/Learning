@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <iostream>
 
-int main()
+void main_00()
 {
     char szSelfName[MAX_PATH] = { 0 };
     char szWindowsPath[MAX_PATH] = { 0 };
@@ -11,16 +11,16 @@ int main()
     char szTmpPath[MAX_PATH] = { 0 };
 
     GetModuleFileNameA(NULL, szSelfName, MAX_PATH);
-    GetWindowsDirectoryA(szWindowsPath, MAX_PATH);
-    GetSystemDirectoryA(szSystemPath, MAX_PATH);
-    
-    strcat_s(szWindowsPath, "\\HackerNewbie.exe");
-    strcat_s(szSystemPath, "\\HackerNewbie.exe");
-
-    std::cout << "Hello World!\n";
-    std::cout << szSelfName << "\n";
-    std::cout << szWindowsPath << "\n";
-    std::cout << szSystemPath << "\n";
+    UINT result = GetWindowsDirectoryA(szWindowsPath, MAX_PATH);
+    if (result) {
+        GetSystemDirectoryA(szSystemPath, MAX_PATH);
+        strcat_s(szWindowsPath, "\\HackerNewbie.exe");
+        strcat_s(szSystemPath, "\\HackerNewbie.exe");
+        std::cout << "Hello World!\n";
+        std::cout << szSelfName << "\n";
+        std::cout << szWindowsPath << "\n";
+        std::cout << szSystemPath << "\n";
+    }
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单

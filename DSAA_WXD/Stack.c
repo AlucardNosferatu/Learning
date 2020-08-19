@@ -56,11 +56,14 @@ int StackFullA(StackA S){
 
 int StackFullB() {
 	Bstack* S_p;
-	int result = (S_p = malloc(sizeof(Bstack)));
-	if (result) {
+	S_p = malloc(sizeof(Bstack));
+	if (S_p) {
 		free(S_p);
+		return 0;
 	}
-	return result;
+	else {
+		return 1;
+	}
 }
 
 int StackTopA(StackA S) {
