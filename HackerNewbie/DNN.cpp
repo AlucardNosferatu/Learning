@@ -74,3 +74,9 @@ public:
 		return output_values;
 	};
 };
+
+class model {
+public:
+	int layers_count;
+	vector<layer> layers;
+};
