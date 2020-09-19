@@ -1,5 +1,4 @@
 #include <iostream>
-
 using namespace std;
 
 extern void Iamastudent();
@@ -24,7 +23,6 @@ int func3() {
 }
 
 int main() {
-	//sphere_surface();
-	int a = 1;
-	int c = ++a * -a;
+	neuron n = new neuron(2);
+
 }
