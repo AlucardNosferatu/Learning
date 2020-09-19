@@ -25,11 +25,10 @@ int func3() {
 }
 
 int main() {
-	neuron n = neuron(2);
-	n.set_bias(1.0);
-	double weights[2] = { 0.5,0.25 };
-	n.set_weights(weights, 2);
-	double inputs[3] = { 2,4,3 };
-	double result = n.output_value(inputs, 3);
-	printf("%f", result);
+	layer l = layer(2, 3);
+	double input_values[2] = { 3.0,4.0 };
+	vector<double> result = l.forward(input_values, 2);
+	for (int i = 0; i < 3; i++) {
+		printf("%f ", result[i]);
+	}
 }
