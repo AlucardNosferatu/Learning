@@ -1,4 +1,6 @@
 #include <iostream>
+#include "DNN.cpp"
+
 using namespace std;
 
 extern void Iamastudent();
@@ -23,6 +25,11 @@ int func3() {
 }
 
 int main() {
-	neuron n = new neuron(2);
-
+	neuron n = neuron(2);
+	n.set_bias(1.0);
+	double weights[2] = { 0.5,0.25 };
+	n.set_weights(weights, 2);
+	double inputs[3] = { 2,4,3 };
+	double result = n.output_value(inputs, 3);
+	printf("%f", result);
 }
