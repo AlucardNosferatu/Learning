@@ -50,3 +50,27 @@ public:
 		}
 	};
 };
+
+
+class layer {
+public:
+	int input_dim;
+	int output_dim;
+	vector<neuron> neurons;
+	layer(int i_d, int o_d) {
+		this->input_dim = i_d;
+		this->output_dim = o_d;
+		for (int i = 0; i < this->output_dim; i++) {
+			neuron temp_n = neuron(this->input_dim);
+			this->neurons.push_back(temp_n);
+		}
+	};
+	vector<double> forward(double input_values[],int size) {
+		vector<double> output_values;
+		for (int i = 0; i < this->output_dim; i++) {
+			double result = this->neurons[i].output_value(input_values, size);
+			output_values.push_back(result);
+		}
+		return output_values;
+	};
+};
