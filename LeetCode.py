@@ -102,15 +102,40 @@ class Solution:
 
     def detectCapitalUse(self, word: str) -> bool:
         hasLower = False
-        for i in range(0,len(word)):
+        for i in range(0, len(word)):
             c = word[i]
             hasLower = hasLower or c.islower()
-        for i in range(0,len(word)):
+        for i in range(0, len(word)):
             c = word[i]
-            if c.isupper() and i!=0 and hasLower:
+            if c.isupper() and i != 0 and hasLower:
                 return False
         return True
 
+    def removeOuterParentheses(self, S: str) -> str:
+        stack = []
+        pairs = []
+        for i, char in enumerate(S):
+            if char == '(':
+                stack.append(i)
+            else:
+                if len(stack) > 1:
+                    stack.pop(-1)
+                else:
+                    pairs.append([stack.pop(-1), i])
+        deleted = []
+        for pair in pairs:
+            deleted += pair
+        deleted = list(set(deleted))
+        deleted.sort()
+        deleted.reverse()
+        s_list = list(S)
+        out = ''
+        for index in deleted:
+            s_list.pop(index)
+        for char in s_list:
+            out += char
+        return out
+
 
 S = Solution()
-print(S.detectCapitalUse("FFFFFFFFFFFFFFFFFFFFf"))
+print(S.removeOuterParentheses('(()())((()))()'))
