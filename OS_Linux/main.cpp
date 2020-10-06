@@ -22,8 +22,8 @@ int main()
         exit(1);
     }
 
-    printf("sysname:%s\n", buf.sysname);
-    printf("nodename:%s\n", buf.nodename);
+    //printf("sysname:%s\n", buf.sysname);
+    //printf("nodename:%s\n", buf.nodename);
     printf("release:%s\n", buf.release);
     printf("version:%s\n", buf.version);
     printf("machine:%s\n", buf.machine);
