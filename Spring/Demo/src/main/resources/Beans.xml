@@ -5,12 +5,17 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <bean id="beanTemplate" abstract="true">
+        <property name="Msg" value="I wish I could see her in real life."/>
+        <property name="Code" value="2029"/>
+    </bean>
+
     <bean id="HS_0" class="com.lost_xmas.Demo.HelloSpring" init-method="start" destroy-method="death">
         <property name="Msg" value="I Love Carol!"/>
     </bean>
 
-    <bean id="HSJ_0" class="com.lost_xmas.Demo.HelloSpringJr" parent="HS_0">
-        <property name="Code" value="20291224"/>
+    <bean id="HSJ_0" class="com.lost_xmas.Demo.HelloSpringJr" parent="beanTemplate">
+        <property name="Code" value="1224"/>
     </bean>
 
 <!--    <bean class="com.lost_xmas.Demo.InitHelloSpring" />-->
