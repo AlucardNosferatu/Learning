@@ -1,10 +1,16 @@
 package com.lost_xmas.Demo;
 public class HelloSpring {
     private String Msg;
-    public void setMessage(String message){
+    public void setMsg(String message){
         this.Msg  = message;
     }
-    public void getMessage(){
-        System.out.println("Your Message : " + this.Msg);
+    public void getMsg(){
+        System.out.println(this.Msg);
+    }
+    public void start(){
+        System.out.println("We fell in love in 2016");
+    }
+    public void death(){
+        System.out.println("Even death won't separate us.");
     }
 }
