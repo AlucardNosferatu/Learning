@@ -15,7 +15,7 @@ public class MainApp {
         AbstractApplicationContext class_context =new AnnotationConfigApplicationContext(HelloFactory.class);
 
         HelloSpring HS = class_context.getBean(HelloSpring.class);
-        HS.setMsg(class_context.getBean(HelloString.class));
+//        HS.setMsg(class_context.getBean(HelloString.class));
 //        HS.getMsg().setHello("I Love Carol!");
         System.out.println(HS.getMsg().getHello());
 

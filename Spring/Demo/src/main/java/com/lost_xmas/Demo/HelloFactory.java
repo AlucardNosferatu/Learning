@@ -21,6 +21,7 @@ public class HelloFactory {
     @Bean
     public HelloSpring springFactory(){
         HelloSpring HS=new HelloSpring();
+        HS.setMsg(this.stringFactory());
         return HS;
     }
 
