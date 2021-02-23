@@ -13,6 +13,7 @@ public class MainApp {
 //        ApplicationContext context = new ClassPathXmlApplicationContext("./Beans.xml");
         AbstractApplicationContext context = new ClassPathXmlApplicationContext("./Beans.xml");
         HelloSpring obj = (HelloSpring) context.getBean("HS_0");
+        HelloString Msg=(HelloString) context.getBean("msg");
 //        HelloSpringJr objJr = (HelloSpringJr) context.getBean("HSJ_0");
 //        XmlBeanFactory XBF = new XmlBeanFactory((new ClassPathResource("Beans.xml")));
 //        HelloSpring obj = (HelloSpring) XBF.getBean("HS_0");

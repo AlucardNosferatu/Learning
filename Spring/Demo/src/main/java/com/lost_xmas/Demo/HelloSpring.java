@@ -1,21 +1,21 @@
 package com.lost_xmas.Demo;
 public class HelloSpring {
-    private String Msg;
-
+    private HelloString Msg;
     private XmasObject Xmas;
 
-    public HelloSpring(XmasObject X){
-        this.Xmas=X;
-        System.out.println(this.Xmas.getName());
-    }
+//    public HelloSpring(XmasObject X){
+//        this.Xmas=X;
+//        System.out.println(this.Xmas.getName());
+//    }
 
-    public void setMsg(String message){
+    public void setMsg(HelloString message){
         System.out.println("Setting Msg...");
         this.Msg  = message;
     }
 
-    public String getMsg(){
-        System.out.println(this.Msg);
+    public HelloString getMsg(){
+        System.out.println(this.Msg.getHello());
+        System.out.println(this.Xmas.getName());
         return Msg;
     }
 
@@ -26,6 +26,7 @@ public class HelloSpring {
     public XmasObject getXmas(){
         return this.Xmas;
     }
+
     public void start(){
         System.out.println("We fell in love in 2016");
     }
