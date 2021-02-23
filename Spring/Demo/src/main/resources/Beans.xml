@@ -16,16 +16,15 @@
                 <constructor-arg value="I Love Carol!"/>
             </bean>
         </property>
-        <property name="xmas">
-            <bean id="var2" class="com.lost_xmas.Demo.XmasObject">
-                <property name="Year" value="2021"/>
-                <property name="Name" value="Carol"/>
-            </bean>
-        </property>
+<!--        <property name="xmas">-->
+<!--            <bean id="var2" class="com.lost_xmas.Demo.XmasObject">-->
+<!--                <property name="Year" value="2021"/>-->
+<!--                <property name="Name" value="Carol"/>-->
+<!--            </bean>-->
+<!--        </property>-->
     </bean>
 
-    <bean id="HS_0" class="com.lost_xmas.Demo.HelloSpring" parent="beanTemplate">
-    </bean>
+    <bean id="HS_0" class="com.lost_xmas.Demo.HelloSpring" autowire="no" parent="beanTemplate"/>
 
     <bean id="var3" class="com.lost_xmas.Demo.XmasObject">
         <property name="Year" value="2021"/>
