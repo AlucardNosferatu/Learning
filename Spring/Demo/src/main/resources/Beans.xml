@@ -2,22 +2,42 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-<!--    <bean id="beanTemplate" abstract="true">-->
-<!--        <property name="Msg" value="I wish I could see her in real life."/>-->
-<!--        <property name="Code" value="2029"/>-->
-<!--    </bean>-->
+    <context:annotation-config/>
 
-    <bean id="HS_0" class="com.lost_xmas.Demo.HelloSpring" autowire="byName" />
+    <bean id="beanTemplate" abstract="true">
+        <property name="msg">
+            <bean id="var1" class="com.lost_xmas.Demo.HelloString">
+                <constructor-arg value="I Love Carol!"/>
+            </bean>
+        </property>
+        <property name="xmas">
+            <bean id="var2" class="com.lost_xmas.Demo.XmasObject">
+                <property name="Year" value="2021"/>
+                <property name="Name" value="Carol"/>
+            </bean>
+        </property>
+    </bean>
 
-    <bean id="xmas" class="com.lost_xmas.Demo.XmasObject">
+    <bean id="HS_0" class="com.lost_xmas.Demo.HelloSpring" parent="beanTemplate">
+    </bean>
+
+    <bean id="var3" class="com.lost_xmas.Demo.XmasObject">
         <property name="Year" value="2021"/>
         <property name="Name" value="Carol"/>
     </bean>
 
-    <bean id="msg" class="com.lost_xmas.Demo.HelloString">
+    <bean id="var4" class="com.lost_xmas.Demo.XmasObject">
+        <property name="Year" value="2029"/>
+        <property name="Name" value="Scrooge"/>
+    </bean>
+
+    <bean id="var5" class="com.lost_xmas.Demo.HelloString">
         <constructor-arg value="I Love Carol!"/>
     </bean>
 

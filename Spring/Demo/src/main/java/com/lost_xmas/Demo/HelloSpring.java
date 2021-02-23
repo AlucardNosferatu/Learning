@@ -1,4 +1,7 @@
 package com.lost_xmas.Demo;
+
+import org.springframework.beans.factory.annotation.Required;
+
 public class HelloSpring {
     private HelloString Msg;
     private XmasObject Xmas;
@@ -8,17 +11,19 @@ public class HelloSpring {
 //        System.out.println(this.Xmas.getName());
 //    }
 
+    @Required
     public void setMsg(HelloString message){
         System.out.println("Setting Msg...");
         this.Msg  = message;
     }
 
     public HelloString getMsg(){
-        System.out.println(this.Msg.getHello());
-        System.out.println(this.Xmas.getName());
+//        System.out.println(this.Msg.getHello());
+//        System.out.println(this.Xmas.getName());
         return Msg;
     }
 
+    @Required
     public void setXmas(XmasObject X){
         this.Xmas=X;
     }

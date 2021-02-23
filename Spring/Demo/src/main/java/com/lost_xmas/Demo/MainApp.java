@@ -9,20 +9,20 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class MainApp {
     public static void main(String[] args) {
-        System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));
-//        ApplicationContext context = new ClassPathXmlApplicationContext("./Beans.xml");
-        AbstractApplicationContext context = new ClassPathXmlApplicationContext("./Beans.xml");
+//        System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));
+        ApplicationContext context = new ClassPathXmlApplicationContext("./Beans.xml");
         HelloSpring obj = (HelloSpring) context.getBean("HS_0");
-        HelloString Msg=(HelloString) context.getBean("msg");
+//        HelloString Msg=(HelloString) context.getBean("HelloString");
 //        HelloSpringJr objJr = (HelloSpringJr) context.getBean("HSJ_0");
 //        XmlBeanFactory XBF = new XmlBeanFactory((new ClassPathResource("Beans.xml")));
 //        HelloSpring obj = (HelloSpring) XBF.getBean("HS_0");
 //        obj.getMsg();
 //        obj.setMsg("She Is My Angel!!!");
 //        obj = (HelloSpring) XBF.getBean("HS_0");
-        obj.getMsg();
+        System.out.println(obj.getMsg().getHello());
+        System.out.println(obj.getXmas().getName());
 //        objJr.getMsg();
 //        objJr.getCode();
-        context.registerShutdownHook();
+//        context.registerShutdownHook();
     }
 }
