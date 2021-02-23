@@ -12,16 +12,16 @@ public class MainApp {
         System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));
 //        ApplicationContext context = new ClassPathXmlApplicationContext("./Beans.xml");
         AbstractApplicationContext context = new ClassPathXmlApplicationContext("./Beans.xml");
-//        HelloSpring obj = (HelloSpring) context.getBean("HS_0");
-        HelloSpringJr objJr = (HelloSpringJr) context.getBean("HSJ_0");
+        HelloSpring obj = (HelloSpring) context.getBean("HS_0");
+//        HelloSpringJr objJr = (HelloSpringJr) context.getBean("HSJ_0");
 //        XmlBeanFactory XBF = new XmlBeanFactory((new ClassPathResource("Beans.xml")));
 //        HelloSpring obj = (HelloSpring) XBF.getBean("HS_0");
 //        obj.getMsg();
 //        obj.setMsg("She Is My Angel!!!");
 //        obj = (HelloSpring) XBF.getBean("HS_0");
-//        obj.getMsg();
-        objJr.getMsg();
-        objJr.getCode();
+        obj.getMsg();
+//        objJr.getMsg();
+//        objJr.getCode();
         context.registerShutdownHook();
     }
 }

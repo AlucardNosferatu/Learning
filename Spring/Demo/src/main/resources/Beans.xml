@@ -11,12 +11,19 @@
     </bean>
 
     <bean id="HS_0" class="com.lost_xmas.Demo.HelloSpring" init-method="start" destroy-method="death">
+        <constructor-arg ref="HS_1"/>
         <property name="Msg" value="I Love Carol!"/>
     </bean>
 
-    <bean id="HSJ_0" class="com.lost_xmas.Demo.HelloSpringJr" parent="beanTemplate">
-        <property name="Code" value="1224"/>
+    <bean id="HS_1" class="com.lost_xmas.Demo.XmasObject">
+        <property name="Year" value="2021"/>
+        <property name="Name" value="Carol"/>
     </bean>
 
-<!--    <bean class="com.lost_xmas.Demo.InitHelloSpring" />-->
+
+<!--    <bean id="HSJ_0" class="com.lost_xmas.Demo.HelloSpringJr" parent="beanTemplate">-->
+<!--        <property name="Code" value="1224"/>-->
+<!--    </bean>-->
+
+    <bean class="com.lost_xmas.Demo.InitHelloSpring" />
 </beans>
