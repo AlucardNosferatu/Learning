@@ -19,7 +19,7 @@ public class HelloSpring {
 //    }
 
 
-    @Required
+//    @Required
     public void setMsg(HelloString message){
 //        System.out.println("Setting Msg...");
         this.Msg  = message;
@@ -31,13 +31,13 @@ public class HelloSpring {
         return Msg;
     }
 
-    @Resource(name="var4")
+//    @Resource(name="var4")
 //    @Qualifier("var4")
     public void setXmas(XmasObject X){
         this.Xmas=X;
     }
 
-    @Resource(name="var3")
+//    @Resource(name="var3")
 //    @Qualifier("var3")
     public void setXmas2(XmasObject X){
         this.Xmas=X;
