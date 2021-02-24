@@ -32,7 +32,9 @@
                     <uriEncoding>UTF-8</uriEncoding>
                     <path>/HelloWeb/hello</path>
                     <server>Tomcat9</server>
-<!--                    <ignorePackaging>true</ignorePackaging>-->
+                    <update>true</update>
+                    <username>Scrooge</username>
+                    <password>20291224</password>
                 </configuration>
             </plugin>
         </plugins>
