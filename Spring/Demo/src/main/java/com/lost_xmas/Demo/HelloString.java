@@ -1,8 +1,5 @@
 package com.lost_xmas.Demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
-
 public class HelloString {
     private String Hello;
 
@@ -15,5 +12,28 @@ public class HelloString {
     }
     public String getHello(){
         return this.Hello;
+    }
+
+    public void beforeAspect(){
+        System.out.println("This will always show before running getMsg.");
+    }
+
+    public void afterAspect(){
+        System.out.println("This will always show after running getMsg.");
+    }
+
+    /**
+     * This is the method which I would like to execute
+     * when any method returns.
+     */
+    public void afterReturningAdvice(Object retVal){
+        System.out.println("Returning:" + ((HelloString) retVal).getHello() );
+    }
+    /**
+     * This is the method which I would like to execute
+     * if there is an exception raised.
+     */
+    public void AfterThrowingAdvice(IllegalArgumentException ex){
+        System.out.println("There has been an exception: " + ex.toString());
     }
 }

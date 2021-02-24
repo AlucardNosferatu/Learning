@@ -12,16 +12,16 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class MainApp {
     public static void main(String[] args) {
 //        System.out.println("用户的当前工作目录:"+System.getProperty("user.dir"));
-//        AbstractApplicationContext context = new ClassPathXmlApplicationContext("./Beans.xml");
-        ConfigurableApplicationContext class_context = new AnnotationConfigApplicationContext(HelloFactory.class);
+        AbstractApplicationContext context = new ClassPathXmlApplicationContext("./Beans.xml");
+//        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(HelloFactory.class);
 //        HS.setMsg(class_context.getBean(HelloString.class));
 //        HS.getMsg().setHello("I Love Carol!");
-        class_context.start();
-        class_context.stop();
-        HelloSpring HS = class_context.getBean(HelloSpring.class);
-        HelloPublisher HP = (HelloPublisher) class_context.getBean("publisherFactory");
-        HP.SayHi();
-        System.out.println(HS.getMsg().getHello());
+//        context.start();
+//        context.stop();
+        HelloSpring HS = context.getBean(HelloSpring.class);
+//        HelloPublisher HP = (HelloPublisher) class_context.getBean("publisherFactory");
+//        HP.SayHi();
+        HelloString HStr=HS.getMsg();
 //        HelloSpring obj = (HelloSpring) context.getBean("HS_0");
 //        HelloString Msg=(HelloString) context.getBean("HelloString");
 //        HelloSpringJr objJr = (HelloSpringJr) context.getBean("HSJ_0");
@@ -34,6 +34,6 @@ public class MainApp {
 //        System.out.println(obj.getXmas().getName());
 //        objJr.getMsg();
 //        objJr.getCode();
-        class_context.registerShutdownHook();
+        context.registerShutdownHook();
     }
 }

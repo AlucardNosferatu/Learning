@@ -2,13 +2,32 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
     <context:annotation-config/>
+
+    <aop:config>
+        <aop:aspect id="log" ref="var5">
+            <aop:pointcut id="getHSMsg" expression="execution(* com.lost_xmas.Demo.HelloSpring.getMsg(..))"/>
+            <aop:before pointcut-ref="getHSMsg" method="beforeAspect"/>
+            <aop:after pointcut-ref="getHSMsg" method="afterAspect"/>
+            <aop:after-returning pointcut-ref="getHSMsg"
+                                 returning="retVal"
+                                 method="afterReturningAdvice"/>
+            <aop:after-throwing pointcut-ref="getHSMsg"
+                                throwing="ex"
+                                method="AfterThrowingAdvice"/>
+        </aop:aspect>
+    </aop:config>
+
+
 
     <bean id="beanTemplate" abstract="true">
         <property name="msg">
@@ -38,6 +57,14 @@
 
     <bean id="var5" class="com.lost_xmas.Demo.HelloString">
         <constructor-arg value="I Love Carol!"/>
+    </bean>
+
+    <bean id="xmas_string" class="java.lang.String">
+        <constructor-arg value="I Love Carol!"/>
+    </bean>
+
+    <bean id="xmas_string2" class="java.lang.String">
+        <constructor-arg value="Carol is always in my mind."/>
     </bean>
 
 <!--    <bean id="HSJ_0" class="com.lost_xmas.Demo.HelloPublisher" parent="beanTemplate">-->

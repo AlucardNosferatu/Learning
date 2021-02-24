@@ -1,5 +1,8 @@
 package com.lost_xmas.Demo;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 public class XmasObject {
     private int Year;
 
@@ -16,6 +19,8 @@ public class XmasObject {
         this.Year=Y;
     }
 
+    @Autowired
+    @Qualifier("xmas_string2")
     public void setName(String N){
         this.Name=N;
     }

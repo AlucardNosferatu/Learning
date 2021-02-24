@@ -1,9 +1,5 @@
 package com.lost_xmas.Demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Required;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -26,7 +22,7 @@ public class HelloSpring {
     }
 
     public HelloString getMsg(){
-//        System.out.println(this.Msg.getHello());
+        System.out.println(this.Msg.getHello());
 //        System.out.println(this.Xmas.getName());
         return Msg;
     }
@@ -37,7 +33,7 @@ public class HelloSpring {
         this.Xmas=X;
     }
 
-//    @Resource(name="var3")
+    @Resource(name="var3")
 //    @Qualifier("var3")
     public void setXmas2(XmasObject X){
         this.Xmas=X;
