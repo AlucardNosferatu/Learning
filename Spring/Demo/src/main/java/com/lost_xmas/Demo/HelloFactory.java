@@ -2,8 +2,10 @@ package com.lost_xmas.Demo;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 @Configuration
+@Import(HelloHandler.class)
 public class HelloFactory {
 
     @Bean
@@ -26,8 +28,8 @@ public class HelloFactory {
     }
 
     @Bean
-    public HelloSpringJr springJrFactory(){
-        HelloSpringJr HSJ=new HelloSpringJr();
-        return HSJ;
+    public HelloPublisher publisherFactory(){
+        HelloPublisher HP=new HelloPublisher();
+        return HP;
     }
 }

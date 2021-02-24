@@ -40,7 +40,7 @@
         <constructor-arg value="I Love Carol!"/>
     </bean>
 
-<!--    <bean id="HSJ_0" class="com.lost_xmas.Demo.HelloSpringJr" parent="beanTemplate">-->
+<!--    <bean id="HSJ_0" class="com.lost_xmas.Demo.HelloPublisher" parent="beanTemplate">-->
 <!--        <property name="Code" value="1224"/>-->
 <!--    </bean>-->
 
