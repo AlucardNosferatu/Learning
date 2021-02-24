@@ -13,34 +13,34 @@
 
     <context:annotation-config/>
 
-    <aop:config>
-        <aop:aspect id="log" ref="var5">
-            <aop:pointcut id="getHSMsg" expression="execution(* com.lost_xmas.Demo.HelloSpring.getMsg(..))"/>
-            <aop:before pointcut-ref="getHSMsg" method="beforeAspect"/>
-            <aop:after pointcut-ref="getHSMsg" method="afterAspect"/>
-            <aop:after-returning pointcut-ref="getHSMsg"
-                                 returning="retVal"
-                                 method="afterReturningAdvice"/>
-            <aop:after-throwing pointcut-ref="getHSMsg"
-                                throwing="ex"
-                                method="AfterThrowingAdvice"/>
-        </aop:aspect>
-    </aop:config>
+<!--    <aop:config>-->
+<!--        <aop:aspect id="log" ref="var5">-->
+<!--            <aop:pointcut id="getHSMsg" expression="execution(* com.lost_xmas.Demo.HelloSpring.getMsg(..))"/>-->
+<!--            <aop:before pointcut-ref="getHSMsg" method="beforeAspect"/>-->
+<!--            <aop:after pointcut-ref="getHSMsg" method="afterAspect"/>-->
+<!--            <aop:after-returning pointcut-ref="getHSMsg"-->
+<!--                                 returning="retVal"-->
+<!--                                 method="afterReturningAdvice"/>-->
+<!--            <aop:after-throwing pointcut-ref="getHSMsg"-->
+<!--                                throwing="ex"-->
+<!--                                method="AfterThrowingAdvice"/>-->
+<!--        </aop:aspect>-->
+<!--    </aop:config>-->
 
-
+    <aop:aspectj-autoproxy/>
 
     <bean id="beanTemplate" abstract="true">
         <property name="msg">
-            <bean id="var1" class="com.lost_xmas.Demo.HelloString">
+            <bean id="var1" class="com.lost_xmas.Demo.HelloAspect">
                 <constructor-arg value="I Love Carol!"/>
             </bean>
         </property>
-<!--        <property name="xmas">-->
+        <property name="xmas" ref="var4">
 <!--            <bean id="var2" class="com.lost_xmas.Demo.XmasObject">-->
 <!--                <property name="Year" value="2021"/>-->
 <!--                <property name="Name" value="Carol"/>-->
 <!--            </bean>-->
-<!--        </property>-->
+        </property>
     </bean>
 
     <bean id="HS_0" class="com.lost_xmas.Demo.HelloSpring" autowire="no" parent="beanTemplate"/>
@@ -52,10 +52,10 @@
 
     <bean id="var4" class="com.lost_xmas.Demo.XmasObject">
         <property name="Year" value="2029"/>
-        <property name="Name" value="Scrooge"/>
+<!--        <property name="Name" value="Scrooge"/>-->
     </bean>
 
-    <bean id="var5" class="com.lost_xmas.Demo.HelloString">
+    <bean id="var5" class="com.lost_xmas.Demo.HelloAspect">
         <constructor-arg value="I Love Carol!"/>
     </bean>
 

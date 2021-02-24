@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 
 public class HelloSpring {
 
-    private HelloString Msg;
+    private HelloAspect Msg;
     private XmasObject Xmas;
 
 //    public HelloSpring(XmasObject X){
@@ -16,12 +16,12 @@ public class HelloSpring {
 
 
 //    @Required
-    public void setMsg(HelloString message){
+    public void setMsg(HelloAspect message){
 //        System.out.println("Setting Msg...");
         this.Msg  = message;
     }
 
-    public HelloString getMsg(){
+    public HelloAspect getMsg(){
         System.out.println(this.Msg.getHello());
 //        System.out.println(this.Xmas.getName());
         return Msg;

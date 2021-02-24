@@ -21,7 +21,8 @@ public class MainApp {
         HelloSpring HS = context.getBean(HelloSpring.class);
 //        HelloPublisher HP = (HelloPublisher) class_context.getBean("publisherFactory");
 //        HP.SayHi();
-        HelloString HStr=HS.getMsg();
+        HelloAspect HStr=HS.getMsg();
+//        System.out.println(HS.getXmas().getName());
 //        HelloSpring obj = (HelloSpring) context.getBean("HS_0");
 //        HelloString Msg=(HelloString) context.getBean("HelloString");
 //        HelloSpringJr objJr = (HelloSpringJr) context.getBean("HSJ_0");

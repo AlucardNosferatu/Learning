@@ -15,8 +15,8 @@ public class HelloFactory {
     }
 
     @Bean
-    public HelloString stringFactory(){
-        HelloString HS=new HelloString("I hope I can see her in the flesh someday.");
+    public HelloAspect stringFactory(){
+        HelloAspect HS=new HelloAspect("I hope I can see her in the flesh someday.");
         return HS;
     }
 
