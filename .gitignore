@@ -7,18 +7,13 @@ DL/ObjectDetection/DataCache/images_count.pkl
 *.h5
 DL/ObjectDetection/TrainedModels/VGG16_COORDINATE.h5py/
 *.pkl
-DSAA_WXD/.idea/
-DSAA_WXD/.vs/
 DSAA_WXD/x64/Debug/
-HackerNewbie/.vs/
 HackerNewbie/x64/Debug/
 OS_Linux/
 readme/
-OpenGL/.idea/
-PathFinder/.idea/
 Spring/
-DSAA/.idea/
 COMSOL/
 SpringBoot/
 SpringMVC/
-Conventional ML/.idea/
+*.idea/
+*.vs/
