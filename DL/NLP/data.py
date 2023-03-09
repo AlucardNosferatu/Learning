@@ -1,10 +1,7 @@
 import json
 import re
-
+import pandas as pd
 from config import MAX_SENTENCE_LENGTH
-
-file = open('dataset.json')
-data = json.load(file)
 
 
 def clean_text(text):
@@ -28,6 +25,7 @@ def clean_text(text):
     return text
 
 
+# noinspection RegExpRepeatedSpace,RegExpDuplicateCharacterInClass
 def preprocess_sentence(sentence):
     sentence = clean_text(sentence)
     sentence = sentence.replace('_comma_', ',')
@@ -39,7 +37,7 @@ def preprocess_sentence(sentence):
     return sentence
 
 
-def load_conversations():
+def load_conversations(data):
     count = 0
     inputs, outputs = [], []
     for convo in data:
@@ -52,6 +50,26 @@ def load_conversations():
     return inputs, outputs
 
 
+def load_conversations_from_csv(data):
+    inputs, outputs = [], []
+
+    for index, row in data.iterrows():
+        ip = preprocess_sentence(row['questionTitle'])
+        op = preprocess_sentence(row['answerText'].replace('\n', ' '))
+
+        if len(ip.split()) > MAX_SENTENCE_LENGTH:
+            continue
+
+        outputs.append(op.split('.')[0].strip())
+        inputs.append(ip)
+
+    return inputs, outputs
+
+
 if __name__ == '__main__':
-    questions, answers = load_conversations()
+    file = open('Data/dataset.json')
+    data_json = json.load(file)
+    questions, answers = load_conversations(data_json)
+    data_csv = pd.read_csv('Data/20200325_counsel_chat.csv')
+    questions2, answers2 = load_conversations_from_csv(data_csv)
     print('对话数据读取完成')

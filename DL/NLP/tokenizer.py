@@ -1,13 +1,22 @@
+import json
+import pandas as pd
 import tensorflow as tf
 import tensorflow_datasets as tfds
 
-from data import load_conversations
+from data import load_conversations, load_conversations_from_csv
 from config import MAX_SENTENCE_LENGTH
 
 BUFFER_SIZE = 20000
 
-questions, answers = load_conversations()
+file = open('Data/dataset.json')
+data_json = json.load(file)
+questions, answers = load_conversations(data_json)
+data_csv = pd.read_csv('Data/20200325_counsel_chat.csv')
+questions2, answers2 = load_conversations_from_csv(data_csv)
+questions += questions2
+answers += answers2
 print('对话数据读取完成')
+print(len(questions), len(answers))
 tokenizer = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
     questions + answers,
     target_vocab_size=2 ** 13

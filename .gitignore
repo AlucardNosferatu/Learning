@@ -19,3 +19,4 @@ SpringMVC/
 *.vs/
 *__pycache__/
 DL/NLP/Save/
+DL/NLP/Data/
