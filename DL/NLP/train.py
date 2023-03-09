@@ -5,6 +5,7 @@ from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BATCH_SIZE, E
 from metric import loss_function, accuracy, perplexity
 from tokenizer import VOCAB_SIZE, do_tokenize, questions, answers
 
+print(tf.config.list_physical_devices('GPU'))
 tf.keras.backend.clear_session()
 
 
@@ -53,7 +54,8 @@ if __name__ == '__main__':
     print('数据集分批+配置预取完成')
     for i in range(0, EPOCHS):
         print('当前周期：', i + 1)
-        model.fit(dataset, epochs=1)
+        with tf.device('/gpu:0'):
+            model.fit(dataset, epochs=1, workers=4)
         if (i + 1) % SAVE_PERIOD == 0:
             model.save_weights('Save/bot_4')
             print('训练进度已保存')
