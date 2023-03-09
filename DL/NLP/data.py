@@ -46,7 +46,7 @@ def load_conversations(data):
             if len(convo[i]) <= MAX_SENTENCE_LENGTH and len(convo[i + 1]) <= MAX_SENTENCE_LENGTH:
                 inputs.append(preprocess_sentence(convo[i]))
                 outputs.append(preprocess_sentence(convo[i + 1]))
-    print(count)
+    # print(count)
     return inputs, outputs
 
 
