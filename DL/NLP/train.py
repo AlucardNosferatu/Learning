@@ -46,13 +46,15 @@ model.compile(
     run_eagerly=True
 )
 print('模型编译完成')
-
+increment = True
 if __name__ == '__main__':
     print(device_lib.list_local_devices())
     dataset = do_tokenize(questions, answers)
     dataset = dataset.batch(BATCH_SIZE)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')
+    if increment:
+        model.load_weights('Save/bot_4')
     for i in range(0, EPOCHS):
         print('当前周期：', i + 1)
         with tf.device('/gpu:0'):
