@@ -55,7 +55,7 @@ if __name__ == '__main__':
     for i in range(0, EPOCHS):
         print('当前周期：', i + 1)
         with tf.device('/gpu:0'):
-            model.fit(dataset, epochs=1, workers=4)
+            model.fit(dataset, epochs=1)
         if (i + 1) % SAVE_PERIOD == 0:
             model.save_weights('Save/bot_4')
             print('训练进度已保存')
