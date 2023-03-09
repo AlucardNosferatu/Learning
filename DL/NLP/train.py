@@ -1,9 +1,10 @@
 import tensorflow as tf
+from tensorflow.python.keras.callbacks import ModelCheckpoint
 
 from Model.Transformer import transformer
 from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BATCH_SIZE, EPOCHS
 from metric import loss_function, accuracy, perplexity
-from tokenizer import VOCAB_SIZE, dataset
+from tokenizer import VOCAB_SIZE, do_tokenize, questions, answers
 
 tf.keras.backend.clear_session()
 
@@ -47,6 +48,7 @@ model.compile(
 print('模型编译完成')
 
 if __name__ == '__main__':
+    dataset = do_tokenize(questions, answers)
     dataset = dataset.batch(BATCH_SIZE)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')
