@@ -1,5 +1,5 @@
 import tensorflow as tf
-
+from tensorflow.python.client import device_lib
 from Model.Transformer import transformer
 from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BATCH_SIZE, EPOCHS, SAVE_PERIOD
 from metric import loss_function, accuracy, perplexity
@@ -48,6 +48,7 @@ model.compile(
 print('模型编译完成')
 
 if __name__ == '__main__':
+    print(device_lib.list_local_devices())
     dataset = do_tokenize(questions, answers)
     dataset = dataset.batch(BATCH_SIZE)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
@@ -55,6 +56,7 @@ if __name__ == '__main__':
     for i in range(0, EPOCHS):
         print('当前周期：', i + 1)
         with tf.device('/gpu:0'):
+            # with tf.device('/cpu:0'):
             model.fit(dataset, epochs=1)
         if (i + 1) % SAVE_PERIOD == 0:
             model.save_weights('Save/bot_4')

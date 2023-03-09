@@ -51,7 +51,7 @@ model.load_weights('Save/bot_4')
 
 input_str = "I feel incredibly stressed out."
 while input_str != '':
-    print(input_str)
+    print('输入：', input_str)
     output_str = predict(input_str, model)
-    print(output_str)
+    print('输出：', output_str)
     input_str = input()
