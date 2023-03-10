@@ -52,7 +52,7 @@ model.compile(
     run_eagerly=True
 )
 print('模型编译完成')
-increment = False
+increment = True
 if __name__ == '__main__':
     dataset = do_tokenize(questions, answers)
     dataset = dataset.batch(BATCH_SIZE)
