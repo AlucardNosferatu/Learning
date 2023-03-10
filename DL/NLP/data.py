@@ -1,6 +1,8 @@
 import json
 import re
 import pandas as pd
+from tqdm import tqdm
+
 from config import MAX_SENTENCE_LENGTH
 
 
@@ -40,12 +42,12 @@ def preprocess_sentence(sentence):
 def load_conversations(data):
     count = 0
     inputs, outputs = [], []
-    for convo in data:
+    for convo in tqdm(data):
         for i in range(len(convo) - 1):
             count = count + 1
-            if len(convo[i]) <= MAX_SENTENCE_LENGTH and len(convo[i + 1]) <= MAX_SENTENCE_LENGTH:
-                inputs.append(preprocess_sentence(convo[i]))
-                outputs.append(preprocess_sentence(convo[i + 1]))
+            # if len(convo[i]) <= MAX_SENTENCE_LENGTH and len(convo[i + 1]) <= MAX_SENTENCE_LENGTH:
+            inputs.append(preprocess_sentence(convo[i]))
+            outputs.append(preprocess_sentence(convo[i + 1]))
     # print(count)
     return inputs, outputs
 
@@ -53,12 +55,12 @@ def load_conversations(data):
 def load_conversations_from_csv(data):
     inputs, outputs = [], []
 
-    for index, row in data.iterrows():
+    for index, row in tqdm(data.iterrows()):
         ip = preprocess_sentence(row['questionTitle'])
         op = preprocess_sentence(row['answerText'].replace('\n', ' '))
 
-        if len(ip.split()) > MAX_SENTENCE_LENGTH:
-            continue
+        # if len(ip.split()) > MAX_SENTENCE_LENGTH:
+        #     continue
 
         outputs.append(op.split('.')[0].strip())
         inputs.append(ip)

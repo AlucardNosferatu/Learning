@@ -3,7 +3,7 @@ import tensorflow as tf
 from Model.Transformer import transformer
 from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, MAX_SENTENCE_LENGTH
 from data import preprocess_sentence
-from tokenizer import VOCAB_SIZE, tokenizer, START_TOKEN, END_TOKEN
+from tokenizer import VOCAB_SIZE_WITH_START_AND_END, tokenizer, START_TOKEN, END_TOKEN
 
 
 def evaluate(sentence, trained_model):
@@ -40,7 +40,7 @@ def predict(sentence, trained_model):
 
 
 model = transformer(
-    vocab_size=VOCAB_SIZE,
+    vocab_size=VOCAB_SIZE_WITH_START_AND_END,
     num_layers=NUM_LAYERS,
     units=UNITS,
     d_model=D_MODEL,

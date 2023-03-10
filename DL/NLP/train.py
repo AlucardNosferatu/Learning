@@ -3,7 +3,7 @@ import tensorflow as tf
 from Model.Transformer import transformer
 from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BATCH_SIZE, EPOCHS, SAVE_PERIOD
 from metric import loss_function, accuracy, perplexity
-from tokenizer import VOCAB_SIZE, do_tokenize, questions, answers
+from tokenizer import VOCAB_SIZE_WITH_START_AND_END, do_tokenize, questions, answers
 
 tf.keras.backend.clear_session()
 
@@ -29,7 +29,7 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
 
 
 model = transformer(
-    vocab_size=VOCAB_SIZE,
+    vocab_size=VOCAB_SIZE_WITH_START_AND_END,
     num_layers=NUM_LAYERS,
     units=UNITS,
     d_model=D_MODEL,
@@ -39,7 +39,11 @@ print('模型初始化完成')
 learning_rate = CustomSchedule(D_MODEL)
 print('学习率规划完成')
 optimizer = tf.keras.optimizers.Adam(
-    learning_rate, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
+    learning_rate,
+    beta_1=0.9,
+    beta_2=0.98,
+    epsilon=1e-9
+)
 print('优化器初始化完成')
 model.compile(
     optimizer=optimizer,
