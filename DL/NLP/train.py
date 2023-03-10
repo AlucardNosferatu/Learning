@@ -13,7 +13,7 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
     def get_config(self):
         pass
 
-    def __init__(self, d_model, warmup_steps=2000):
+    def __init__(self, d_model, warmup_steps=200):
         super(CustomSchedule, self).__init__()
 
         self.d_model = d_model
