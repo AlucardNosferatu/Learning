@@ -1,15 +1,17 @@
 import tensorflow as tf
-
+import tensorflow_datasets as tfds
 from Model.Transformer import transformer
 from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, MAX_SENTENCE_LENGTH
 from data import preprocess_sentence
-from tokenizer import VOCAB_SIZE_WITH_START_AND_END, tokenizer, START_TOKEN, END_TOKEN
+from tokenizer import VOCAB_SIZE_WITH_START_AND_END, START_TOKEN, END_TOKEN
+
+old_tokenizer = tfds.deprecated.text.SubwordTextEncoder.load_from_file('Save/tokenizer')
 
 
 def evaluate(sentence, trained_model):
     sentence = preprocess_sentence(sentence)
 
-    sentence = tf.expand_dims(START_TOKEN + tokenizer.encode(sentence) + END_TOKEN, axis=0)
+    sentence = tf.expand_dims(START_TOKEN + old_tokenizer.encode(sentence) + END_TOKEN, axis=0)
 
     output = tf.expand_dims(START_TOKEN, 0)
 
@@ -30,8 +32,8 @@ def evaluate(sentence, trained_model):
 def predict(sentence, trained_model):
     prediction = evaluate(sentence, trained_model)
 
-    predicted_sentence = tokenizer.decode(
-        [i for i in prediction if i < tokenizer.vocab_size])
+    predicted_sentence = old_tokenizer.decode(
+        [i for i in prediction if i < old_tokenizer.vocab_size])
 
     # print('Input: {}'.format(sentence))
     # print('Output: {}'.format(predicted_sentence))

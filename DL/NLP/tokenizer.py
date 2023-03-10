@@ -23,13 +23,19 @@ if print_sample:
         print(questions[i])
         print(answers[i])
         print('====================')
-print('开始初始化词向量生成器')
-tokenizer = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
-    questions + answers,
-    target_vocab_size=TARGET_VOCAB_SIZE
-)
-print('词向量生成器初始化完成')
-
+new_tokenizer = False
+if new_tokenizer:
+    print('开始初始化词向量生成器')
+    tokenizer = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
+        questions + answers,
+        target_vocab_size=TARGET_VOCAB_SIZE
+    )
+    print('词向量生成器初始化完成')
+    tokenizer.save_to_file('Save/tokenizer')
+    print('词向量生成器已保存')
+else:
+    tokenizer = tfds.deprecated.text.SubwordTextEncoder.load_from_file('Save/tokenizer')
+    print('词向量生成器已读取')
 START_TOKEN, END_TOKEN = [tokenizer.vocab_size], [tokenizer.vocab_size + 1]
 
 VOCAB_SIZE_WITH_START_AND_END = tokenizer.vocab_size + 2
