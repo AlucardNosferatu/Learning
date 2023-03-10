@@ -4,9 +4,7 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 from tqdm import tqdm
 from data import load_conversations, load_conversations_from_csv
-from config import MAX_SENTENCE_LENGTH, BATCH_SIZE, TARGET_VOCAB_SIZE
-
-BUFFER_SIZE = 20000
+from config import MAX_SENTENCE_LENGTH, BATCH_SIZE, TARGET_VOCAB_SIZE, DATA_BUFFER_SIZE
 
 file = open('Data/dataset.json')
 data_json = json.load(file)
@@ -25,6 +23,7 @@ if print_sample:
         print(questions[i])
         print(answers[i])
         print('====================')
+print('开始初始化词向量生成器')
 tokenizer = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
     questions + answers,
     target_vocab_size=TARGET_VOCAB_SIZE
@@ -70,7 +69,7 @@ def do_tokenize(que, ans):
     ))
 
     ds = ds.cache()
-    ds = ds.shuffle(BUFFER_SIZE)
+    ds = ds.shuffle(DATA_BUFFER_SIZE)
     print('对话数据缓冲完成')
     return ds
 
