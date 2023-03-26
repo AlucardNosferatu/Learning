@@ -1,9 +1,10 @@
 import tensorflow as tf
 
 from Model.Transformer import transformer
-from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BATCH_SIZE, EPOCHS, SAVE_PERIOD
+from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BATCH_SIZE, EPOCHS, SAVE_PERIOD, TARGET_VOCAB_SIZE
+from data import load_conversations_from_json, load_conversations_from_csv
 from metric import loss_function, accuracy, perplexity
-from tokenizer import VOCAB_SIZE_WITH_START_AND_END, do_tokenize, questions, answers
+from tokenizer import do_tokenize, conv_task
 
 tf.keras.backend.clear_session()
 
@@ -29,7 +30,7 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
 
 
 model = transformer(
-    vocab_size=VOCAB_SIZE_WITH_START_AND_END,
+    vocab_size=TARGET_VOCAB_SIZE + 2,
     num_layers=NUM_LAYERS,
     units=UNITS,
     d_model=D_MODEL,
@@ -54,7 +55,11 @@ model.compile(
 print('模型编译完成')
 increment = True
 if __name__ == '__main__':
-    dataset = do_tokenize(questions, answers)
+    questions, answers = load_conversations_from_json('Data/dataset.json')
+    questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
+    questions += questions2
+    answers += answers2
+    dataset = do_tokenize(questions, answers, conv_task, False)
     dataset = dataset.batch(BATCH_SIZE)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')

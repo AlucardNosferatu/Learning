@@ -39,10 +39,12 @@ def preprocess_sentence(sentence):
     return sentence
 
 
-def load_conversations(data):
+def load_conversations_from_json(data_file_path):
+    file = open(data_file_path)
+    data_json = json.load(file)
     count = 0
     inputs, outputs = [], []
-    for convo in tqdm(data):
+    for convo in tqdm(data_json):
         for i in range(len(convo) - 1):
             count = count + 1
             # if len(convo[i]) <= MAX_SENTENCE_LENGTH and len(convo[i + 1]) <= MAX_SENTENCE_LENGTH:
@@ -52,10 +54,10 @@ def load_conversations(data):
     return inputs, outputs
 
 
-def load_conversations_from_csv(data):
+def load_conversations_from_csv(data_file_path):
+    data_csv = pd.read_csv(data_file_path)
     inputs, outputs = [], []
-
-    for index, row in tqdm(data.iterrows()):
+    for index, row in tqdm(data_csv.iterrows()):
         ip = preprocess_sentence(row['questionTitle'])
         op = preprocess_sentence(row['answerText'].replace('\n', ' '))
 
@@ -68,10 +70,29 @@ def load_conversations_from_csv(data):
     return inputs, outputs
 
 
+def read_translation(corpus_path):
+    with open(corpus_path, mode='r', encoding='utf-8') as f:
+        europarl_en = f.read()
+    return europarl_en
+
+
+def clean_translation(corpus):
+    corpus = re.sub(r"\.(?=[0-9]|[a-z]|[A-Z])", '.###', corpus)
+    corpus = re.sub(r"\.###", '', corpus)
+    corpus = re.sub(r"  +", ' ', corpus)
+    corpus = corpus.split('\n')
+    return corpus
+
+
+def load_translation(eng_path, des_path):
+    eng_corpus = read_translation(eng_path)
+    des_corpus = read_translation(des_path)
+    eng_corpus = clean_translation(eng_corpus)
+    des_corpus = clean_translation(des_corpus)
+    return eng_corpus, des_corpus
+
+
 if __name__ == '__main__':
-    file = open('Data/dataset.json')
-    data_json = json.load(file)
-    questions, answers = load_conversations(data_json)
-    data_csv = pd.read_csv('Data/20200325_counsel_chat.csv')
-    questions2, answers2 = load_conversations_from_csv(data_csv)
+    questions, answers = load_conversations_from_json('Data/dataset.json')
+    questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
     print('对话数据读取完成')
