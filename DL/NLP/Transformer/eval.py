@@ -53,7 +53,7 @@ if __name__ == '__main__':
     print('模型初始化完成')
     model.load_weights(WGT_PATH)
 
-    input_str = "I feel incredibly stressed out."
+    input_str = "Can I get you a coffee?"
     while input_str != '':
         print('输入：', input_str)
         output_str = predict(input_str, model, START_TOK, END_TOK)

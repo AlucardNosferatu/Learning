@@ -7,7 +7,7 @@ from metric import loss_function, accuracy, perplexity
 from tokenizer import do_tokenize, conv_task
 
 tf.keras.backend.clear_session()
-new_tokenizer = True
+new_tokenizer = False
 increment = True
 increment = increment and not new_tokenizer
 
@@ -29,7 +29,7 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
         arg1 = tf.math.rsqrt(step)
         arg2 = step * (self.warmup_steps ** -1.5)
 
-        return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
+        return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2) * 1.5
 
 
 def prepare_model(v_size):
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     # answers += answers2
     questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
     print('原始数据已导入')
-    dataset, vocab_size = do_tokenize(questions[:1000000], answers[:1000000], conv_task, new_tokenizer)
+    dataset, vocab_size = do_tokenize(questions[:100000], answers[:100000], conv_task, new_tokenizer)
     dataset = dataset.batch(BSIZE)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')
