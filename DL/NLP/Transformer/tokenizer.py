@@ -3,7 +3,7 @@ import tensorflow_datasets as tfds
 from tqdm import tqdm
 
 from config import MAX_SENTENCE_LENGTH, BSIZE, TGT_VOC_SIZE, DATA_BUFFER_SIZE, TOK_PATH
-from data import load_translation_from_code, load_translation_from_lf
+from data import load_translation_from_lf
 
 
 def conv_task(inputs, outputs, new_tokenizer=False, print_sample=True):

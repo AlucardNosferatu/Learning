@@ -1,10 +1,9 @@
 import json
 import re
+
 import pandas as pd
 import unicodedata
 from tqdm import tqdm
-
-from config import MAX_SENTENCE_LENGTH
 
 
 def clean_text(text):
@@ -48,7 +47,6 @@ def load_conversations_from_json(data_file_path):
     for convo in tqdm(data_json):
         for i in range(len(convo) - 1):
             count = count + 1
-            # if len(convo[i]) <= MAX_SENTENCE_LENGTH and len(convo[i + 1]) <= MAX_SENTENCE_LENGTH:
             inputs.append(preprocess_sentence(convo[i]))
             outputs.append(preprocess_sentence(convo[i + 1]))
     # print(count)
@@ -61,10 +59,6 @@ def load_conversations_from_csv(data_file_path):
     for index, row in tqdm(data_csv.iterrows()):
         ip = preprocess_sentence(row['questionTitle'])
         op = preprocess_sentence(row['answerText'].replace('\n', ' '))
-
-        # if len(ip.split()) > MAX_SENTENCE_LENGTH:
-        #     continue
-
         outputs.append(op.split('.')[0].strip())
         inputs.append(ip)
 

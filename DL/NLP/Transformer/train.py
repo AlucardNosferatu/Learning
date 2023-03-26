@@ -1,8 +1,8 @@
 import tensorflow as tf
 
 from Model.Transformer import transformer
-from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BSIZE, EPOCHS, SAV_PERIOD, TGT_VOC_SIZE, WGT_PATH
-from data import load_conversations_from_json, load_conversations_from_csv, load_translation_from_lf
+from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BSIZE, EPOCHS, SAV_PERIOD, WGT_PATH
+from data import load_translation_from_lf
 from metric import loss_function, accuracy, perplexity
 from tokenizer import do_tokenize, conv_task
 
@@ -66,7 +66,8 @@ if __name__ == '__main__':
     # questions += questions2
     # answers += answers2
     questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
-    dataset, vocab_size = do_tokenize(questions, answers, conv_task, new_tokenizer)
+    print('原始数据已导入')
+    dataset, vocab_size = do_tokenize(questions[:1000000], answers[:1000000], conv_task, new_tokenizer)
     dataset = dataset.batch(BSIZE)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')
