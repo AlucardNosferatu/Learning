@@ -1,8 +1,7 @@
 import tensorflow as tf
 
 from Model.Transformer import transformer
-from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BATCH_SIZE, EPOCHS, SAVE_PERIOD, TARGET_VOCAB_SIZE, \
-    WGT_PATH
+from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BSIZE, EPOCHS, SAV_PERIOD, TGT_VOC_SIZE, WGT_PATH
 from data import load_conversations_from_json, load_conversations_from_csv
 from metric import loss_function, accuracy, perplexity
 from tokenizer import do_tokenize, conv_task
@@ -33,9 +32,9 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
         return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
 
 
-def prepare_model():
+def prepare_model(v_size):
     model = transformer(
-        vocab_size=TARGET_VOCAB_SIZE + 2,
+        vocab_size=v_size,
         num_layers=NUM_LAYERS,
         units=UNITS,
         d_model=D_MODEL,
@@ -66,17 +65,17 @@ if __name__ == '__main__':
     questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
     questions += questions2
     answers += answers2
-    dataset = do_tokenize(questions, answers, conv_task, new_tokenizer)
-    dataset = dataset.batch(BATCH_SIZE)
+    dataset, vocab_size = do_tokenize(questions, answers, conv_task, new_tokenizer)
+    dataset = dataset.batch(BSIZE)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')
-    mdl = prepare_model()
+    mdl = prepare_model(vocab_size)
     if increment:
         mdl.load_weights(WGT_PATH)
     for i in range(0, EPOCHS):
         print('当前周期：', i + 1)
         with tf.device('/gpu:0'):
             mdl.fit(dataset, epochs=1)
-        if (i + 1) % SAVE_PERIOD == 0:
+        if (i + 1) % SAV_PERIOD == 0:
             mdl.save_weights(WGT_PATH)
             print('训练进度已保存')
