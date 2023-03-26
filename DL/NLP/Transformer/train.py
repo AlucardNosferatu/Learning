@@ -1,12 +1,16 @@
 import tensorflow as tf
 
 from Model.Transformer import transformer
-from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BATCH_SIZE, EPOCHS, SAVE_PERIOD, TARGET_VOCAB_SIZE
+from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BATCH_SIZE, EPOCHS, SAVE_PERIOD, TARGET_VOCAB_SIZE, \
+    WGT_PATH
 from data import load_conversations_from_json, load_conversations_from_csv
 from metric import loss_function, accuracy, perplexity
 from tokenizer import do_tokenize, conv_task
 
 tf.keras.backend.clear_session()
+new_tokenizer = False
+increment = True
+increment = increment and not new_tokenizer
 
 
 class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
@@ -62,18 +66,17 @@ if __name__ == '__main__':
     questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
     questions += questions2
     answers += answers2
-    dataset = do_tokenize(questions, answers, conv_task, False)
+    dataset = do_tokenize(questions, answers, conv_task, new_tokenizer)
     dataset = dataset.batch(BATCH_SIZE)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')
     mdl = prepare_model()
-    increment = True
     if increment:
-        mdl.load_weights('Save/bot_4')
+        mdl.load_weights(WGT_PATH)
     for i in range(0, EPOCHS):
         print('当前周期：', i + 1)
         with tf.device('/gpu:0'):
             mdl.fit(dataset, epochs=1)
         if (i + 1) % SAVE_PERIOD == 0:
-            mdl.save_weights('Save/bot_4')
+            mdl.save_weights(WGT_PATH)
             print('训练进度已保存')
