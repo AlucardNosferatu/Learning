@@ -18,5 +18,5 @@ SpringMVC/
 *.idea/
 *.vs/
 *__pycache__/
-DL/NLP/Save/
-DL/NLP/Data/
+DL/NLP/Transformer/Save/
+DL/NLP/Transformer/Data/
