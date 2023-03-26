@@ -12,4 +12,5 @@ TGT_VOC_SIZE = 1024 * 4
 DATA_BUFFER_SIZE = 10240
 # TOK_PATH = 'Save/Chat/tokenizer'
 TOK_PATH = 'Save/Translate/tokenizer'
-WGT_PATH = 'Save/Chat/bot_4'
+# WGT_PATH = 'Save/Chat/bot_4'
+WGT_PATH = 'Save/Translate/bot_4'

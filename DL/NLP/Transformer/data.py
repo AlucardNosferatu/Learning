@@ -1,6 +1,7 @@
 import json
 import re
 import pandas as pd
+import unicodedata
 from tqdm import tqdm
 
 from config import MAX_SENTENCE_LENGTH
@@ -84,12 +85,52 @@ def clean_translation(corpus):
     return corpus
 
 
-def load_translation(eng_path, des_path):
+def load_translation_from_lf(eng_path, des_path):
     eng_corpus = read_translation(eng_path)
     des_corpus = read_translation(des_path)
     eng_corpus = clean_translation(eng_corpus)
     des_corpus = clean_translation(des_corpus)
     return eng_corpus, des_corpus
+
+
+def load_translation_from_code():
+    def preprocess(s):
+        # for details, see https://www.tensorflow.org/alpha/tutorials/sequences/nmt_with_attention
+        s = ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+        s = re.sub(r"([?.!,¿])", r" \1 ", s)
+        s = re.sub(r'[" "]+', " ", s)
+        s = re.sub(r"[^a-zA-Z?.!,¿]+", " ", s)
+        s = s.strip()
+        s = '<start> ' + s + ' <end>'
+        return s
+    sentences = [
+        ("Do you want a cup of coffee?", "¿Quieres una taza de café?"),
+        ("I've had coffee already.", "Ya tomé café."),
+        ("Can I get you a coffee?", "¿Quieres que te traiga un café?"),
+        ("Please give me some coffee.", "Dame algo de café por favor."),
+        ("Would you like me to make coffee?", "¿Quieres que prepare café?"),
+        ("Two coffees, please.", "Dos cafés, por favor."),
+        ("How about a cup of coffee?", "¿Qué tal una taza de café?"),
+        ("I drank two cups of coffee.", "Me tomé dos tazas de café."),
+        ("Would you like to have a cup of coffee?", "¿Te gustaría tomar una taza de café?"),
+        ("There'll be coffee and cake at five.", "A las cinco habrá café y un pastel."),
+        ("Another coffee, please.", "Otro café, por favor."),
+        ("I made coffee.", "Hice café."),
+        ("I would like to have a cup of coffee.", "Quiero beber una taza de café."),
+        ("Do you want me to make coffee?", "¿Quieres que haga café?"),
+        (
+            "It is hard to wake up without a strong cup of coffee.",
+            "Es difícil despertarse sin una taza de café fuerte."
+        ),
+        ("All I drank was coffee.", "Todo lo que bebí fue café."),
+        ("I've drunk way too much coffee today.", "He bebido demasiado café hoy."),
+        ("Which do you prefer, tea or coffee?", "¿Qué prefieres, té o café?"),
+        ("There are many kinds of coffee.", "Hay muchas variedades de café."),
+        ("I will make some coffee.", "Prepararé algo de café.")
+    ]
+    tagged_sentences = [(preprocess(source), preprocess(target)) for (source, target) in sentences]
+    source_sentences, target_sentences = list(zip(*tagged_sentences))
+    return source_sentences, target_sentences
 
 
 if __name__ == '__main__':

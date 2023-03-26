@@ -2,12 +2,12 @@ import tensorflow as tf
 
 from Model.Transformer import transformer
 from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BSIZE, EPOCHS, SAV_PERIOD, TGT_VOC_SIZE, WGT_PATH
-from data import load_conversations_from_json, load_conversations_from_csv
+from data import load_conversations_from_json, load_conversations_from_csv, load_translation_from_lf
 from metric import loss_function, accuracy, perplexity
 from tokenizer import do_tokenize, conv_task
 
 tf.keras.backend.clear_session()
-new_tokenizer = False
+new_tokenizer = True
 increment = True
 increment = increment and not new_tokenizer
 
@@ -61,10 +61,11 @@ def prepare_model(v_size):
 
 
 if __name__ == '__main__':
-    questions, answers = load_conversations_from_json('Data/dataset.json')
-    questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
-    questions += questions2
-    answers += answers2
+    # questions, answers = load_conversations_from_json('Data/dataset.json')
+    # questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
+    # questions += questions2
+    # answers += answers2
+    questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
     dataset, vocab_size = do_tokenize(questions, answers, conv_task, new_tokenizer)
     dataset = dataset.batch(BSIZE)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
