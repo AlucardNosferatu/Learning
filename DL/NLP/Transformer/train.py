@@ -1,14 +1,14 @@
 import tensorflow as tf
 
 from Model.Transformer import transformer
-from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, BSIZE, EPOCHS, SAV_PERIOD, WGT_PATH
+from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, BSIZE, EPOCHS, SAV_P, WGT_PATH, SET_TCOUNT, WARM_UP_EPOCH
 from data import load_translation_from_lf
 from metric import loss_function, accuracy, perplexity
 from tokenizer import do_tokenize, conv_task
 
 tf.keras.backend.clear_session()
 new_tokenizer = False
-increment = True
+increment = False
 increment = increment and not new_tokenizer
 
 
@@ -17,7 +17,7 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
     def get_config(self):
         pass
 
-    def __init__(self, d_model, warmup_steps=200):
+    def __init__(self, d_model, warmup_steps=WARM_UP_EPOCH):
         super(CustomSchedule, self).__init__()
 
         self.d_model = d_model
@@ -29,17 +29,17 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
         arg1 = tf.math.rsqrt(step)
         arg2 = step * (self.warmup_steps ** -1.5)
 
-        return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2) * 1.5
+        return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
 
 
 def prepare_model(v_size):
     model = transformer(
         vocab_size=v_size,
-        num_layers=NUM_LAYERS,
+        num_layers=N_LAYERS,
         units=UNITS,
         d_model=D_MODEL,
-        num_heads=NUM_HEADS,
-        dropout=DROPOUT)
+        num_heads=N_HEADS,
+        dropout=DROP)
     print('模型初始化完成')
     learning_rate = CustomSchedule(D_MODEL)
     print('学习率规划完成')
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     # answers += answers2
     questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
     print('原始数据已导入')
-    dataset, vocab_size = do_tokenize(questions[:100000], answers[:100000], conv_task, new_tokenizer)
+    dataset, vocab_size = do_tokenize(questions[:SET_TCOUNT], answers[:SET_TCOUNT], conv_task, new_tokenizer)
     dataset = dataset.batch(BSIZE)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')
@@ -78,6 +78,6 @@ if __name__ == '__main__':
         print('当前周期：', i + 1)
         with tf.device('/gpu:0'):
             mdl.fit(dataset, epochs=1)
-        if (i + 1) % SAV_PERIOD == 0:
+        if (i + 1) % SAV_P == 0:
             mdl.save_weights(WGT_PATH)
             print('训练进度已保存')

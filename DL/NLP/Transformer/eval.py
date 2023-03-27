@@ -1,7 +1,7 @@
 import tensorflow as tf
 import tensorflow_datasets as tfds
 from Model.Transformer import transformer
-from config import NUM_LAYERS, D_MODEL, NUM_HEADS, UNITS, DROPOUT, MAX_SENTENCE_LENGTH, TOK_PATH, WGT_PATH
+from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, MAX_SENTENCE_LENGTH, TOK_PATH, WGT_PATH
 from data import preprocess_sentence
 from tokenizer import conv_task
 
@@ -45,15 +45,15 @@ if __name__ == '__main__':
     tokenizer, START_TOK, END_TOK, VOCAB_SIZE = conv_task(None, None, False, False)
     model = transformer(
         vocab_size=VOCAB_SIZE,
-        num_layers=NUM_LAYERS,
+        num_layers=N_LAYERS,
         units=UNITS,
         d_model=D_MODEL,
-        num_heads=NUM_HEADS,
-        dropout=DROPOUT)
+        num_heads=N_HEADS,
+        dropout=DROP)
     print('模型初始化完成')
     model.load_weights(WGT_PATH)
 
-    input_str = "Can I get you a coffee?"
+    input_str = "Why are no-smoking areas not enforced?"
     while input_str != '':
         print('输入：', input_str)
         output_str = predict(input_str, model, START_TOK, END_TOK)
