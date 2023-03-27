@@ -2,7 +2,7 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 from tqdm import tqdm
 
-from config import MAX_SENTENCE_LENGTH, SET_BS, TGT_VOC_SIZE, DATA_BUFFER_SIZE, TOK_PATH
+from config import MAX_SENTENCE_LENGTH, SET_BS, TGT_VOC_SIZE, DATA_BUFFER_SIZE, TOK_PATH, SET_TCOUNT
 from data import load_translation_from_lf
 
 
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     # answers += answers2
     questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
     # questions, answers = load_translation_from_code()
-    dataset, vocab_size = do_tokenize(questions, answers, conv_task, True)
+    dataset, vocab_size = do_tokenize(questions[:SET_TCOUNT], answers[:SET_TCOUNT], conv_task, False)
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')

@@ -1,6 +1,10 @@
-import tf_glove
+import pickle
 import re
+
 import nltk
+import numpy as np
+
+import tf_glove
 
 
 def extract_reddit_comments(path):
@@ -30,10 +34,47 @@ def reddit_comment_corpus(path):
     return (tokenize_comment(comment) for comment in extract_reddit_comments(path))
 
 
-# Replace the path with the path to your corpus file
-corpus = reddit_comment_corpus("/media/grady/PrimeMover/Datasets/RC_2015-01-1m_sample")
+def get_trained_model(emb_size=64, ctx_size=4, train_epoch=10, corpus_path="data/xaa"):
+    model = tf_glove.GloVeModel(embedding_size=emb_size, context_size=ctx_size)
+    corpus = reddit_comment_corpus(corpus_path)
+    model.fit_to_corpus(corpus)
+    model.train(num_epochs=train_epoch)
+    model.write_metadata()
+    return model
 
-model = tf_glove.GloVeModel(embedding_size=300, context_size=10)
-model.fit_to_corpus(corpus)
-model.train(num_epochs=100)
-model.embedding_for("reddit")
+
+def save_embeddings(model):
+    emb = np.copy(model.embeddings)
+
+    np.save('embeddings/emb', model.embeddings)
+
+
+def embed_word(word_str, words_list=None, embeddings_array=None):
+    if words_list is None:
+        words_list = pickle.load(open('embeddings/words.pkl', "rb"))
+    if embeddings_array is None:
+        embeddings_array = np.load('embeddings/emb')
+    if word_str not in words_list:
+        raise ValueError('word:', word_str, 'not in vocab')
+    else:
+        word_index = words_list.index(word_str)
+        return embeddings_array[word_index], words_list, embeddings_array
+
+
+def embed_sentences(sentence_without_pad_as_words_list, words_list=None, embeddings_array=None):
+    if words_list is None:
+        words_list = pickle.load(open('embeddings/words.pkl', "rb"))
+    if embeddings_array is None:
+        embeddings_array = np.load('embeddings/emb')
+    merged_embedd = {}
+    for word, index in enumerate(words_list):
+        merged_embedd.__setitem__(word, embeddings_array[index])
+    sentence_vec_without_pad = [merged_embedd[word_str] for word_str in sentence_without_pad_as_words_list]
+    return sentence_vec_without_pad
+
+
+if __name__ == '__main__':
+    mdl = get_trained_model()
+    save_embeddings(mdl)
+    # word_vec, _, _ = embed_word('reddit')
+    # print(word_vec)

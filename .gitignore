@@ -20,3 +20,6 @@ SpringMVC/
 *__pycache__/
 DL/NLP/Transformer/Save/
 DL/NLP/Transformer/Data/
+DL/NLP/GloVe/data/
+DL/NLP/GloVe/embeddings/
+DL/NLP/GloVe/logs/
