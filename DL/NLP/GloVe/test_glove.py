@@ -44,8 +44,6 @@ def get_trained_model(emb_size=64, ctx_size=4, train_epoch=10, corpus_path="data
 
 
 def save_embeddings(model):
-    emb = np.copy(model.embeddings)
-
     np.save('embeddings/emb', model.embeddings)
 
 
@@ -53,28 +51,28 @@ def embed_word(word_str, words_list=None, embeddings_array=None):
     if words_list is None:
         words_list = pickle.load(open('embeddings/words.pkl', "rb"))
     if embeddings_array is None:
-        embeddings_array = np.load('embeddings/emb')
+        embeddings_array = np.load('embeddings/emb.npy')
     if word_str not in words_list:
-        raise ValueError('word:', word_str, 'not in vocab')
+        raise ValueError('word: ' + word_str + ' not in vocab')
     else:
         word_index = words_list.index(word_str)
         return embeddings_array[word_index], words_list, embeddings_array
 
 
-def embed_sentences(sentence_without_pad_as_words_list, words_list=None, embeddings_array=None):
+def embed_sentences(sentence_padded_as_words_list, words_list=None, embeddings_array=None):
     if words_list is None:
         words_list = pickle.load(open('embeddings/words.pkl', "rb"))
     if embeddings_array is None:
-        embeddings_array = np.load('embeddings/emb')
+        embeddings_array = np.load('embeddings/emb.npy')
     merged_embedd = {}
     for word, index in enumerate(words_list):
         merged_embedd.__setitem__(word, embeddings_array[index])
-    sentence_vec_without_pad = [merged_embedd[word_str] for word_str in sentence_without_pad_as_words_list]
-    return sentence_vec_without_pad
+    sentence_vec_padded = [merged_embedd[word_str] for word_str in sentence_padded_as_words_list]
+    return sentence_vec_padded
 
 
 if __name__ == '__main__':
     mdl = get_trained_model()
     save_embeddings(mdl)
-    # word_vec, _, _ = embed_word('reddit')
-    # print(word_vec)
+    word_vec, _, _ = embed_word('reddit')
+    print(word_vec)

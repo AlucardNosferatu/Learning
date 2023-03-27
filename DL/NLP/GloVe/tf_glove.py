@@ -10,6 +10,7 @@ from random import shuffle
 import tensorflow.compat.v1 as tf
 from tensorflow.python.framework import graph_util
 from tensorflow.python.platform import gfile
+from tqdm import tqdm
 
 
 class NotTrainedError(Exception):
@@ -18,6 +19,17 @@ class NotTrainedError(Exception):
 
 class NotFitToCorpusError(Exception):
     pass
+
+
+def pad_region(region, max_sentence_size=200):
+    region.insert(0, '<STA>')
+    region.append('<END>')
+    if len(region) > max_sentence_size:
+        return None
+    else:
+        while len(region) < max_sentence_size:
+            region.append('<PAD>')
+        return region
 
 
 class GloVeModel:
@@ -57,7 +69,12 @@ class GloVeModel:
             self.__cooccurrence_matrix = pickle.load(open('embeddings/cooccurrence.pkl', "rb"))
         else:
             print('fitting corpus, please wait')
-            for region in corpus:
+            throw_by_padding = 0
+            for region in tqdm(corpus):
+                region = pad_region(region=region)
+                if region is None:
+                    throw_by_padding += 1
+                    continue
                 word_counts.update(region)
                 for l_context, word, r_context in _context_windows(region, left_size, right_size):
                     if len(word) <= 1:
@@ -72,6 +89,7 @@ class GloVeModel:
                         cooccurrence_counts[(word, context_word)] += 1 / (i + 1)
                     for i, context_word in enumerate(r_context):
                         cooccurrence_counts[(word, context_word)] += 1 / (i + 1)
+            print(throw_by_padding, 'sentences thrown due to over-size.')
             if len(cooccurrence_counts) == 0:
                 raise ValueError("No coccurrences in corpus. Did you try to reuse a generator?")
             self.__words = [word for word, count in word_counts.most_common(vocab_size)
