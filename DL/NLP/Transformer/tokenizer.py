@@ -2,12 +2,13 @@ import itertools
 import pickle
 
 import nltk
+import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
 from tqdm import tqdm
 
 from config import MAX_SENTENCE_LENGTH, SET_BS, TGT_VOC_SIZE, DATA_BUFFER_SIZE, TOK_PATH
-from data import load_translation_from_code
+from data import load_translation_from_code, load_conversation_list_cn
 
 
 def task_conv_eng(inputs, outputs, new_tokenizer=False, print_sample=True):
@@ -44,8 +45,8 @@ def task_conv_chn(inputs, outputs, new_tokenizer=False, print_sample=True):
         print('条数：', len(inputs), len(outputs))
         print('')
         if print_sample:
-            print('打印前10条样本：')
-            for i in range(0, 10):
+            print('打印前5条样本：')
+            for i in range(0, 5):
                 print(inputs[i])
                 print(outputs[i])
                 print('====================')
@@ -98,6 +99,9 @@ def tokenize_and_filter(inputs, outputs, task_func, new_tokenizer):
             tokenized_inputs, maxlen=MAX_SENTENCE_LENGTH, padding='post')
         tokenized_outputs = tf.keras.preprocessing.sequence.pad_sequences(
             tokenized_outputs, maxlen=MAX_SENTENCE_LENGTH, padding='post')
+    else:
+        tokenized_inputs = np.array(tokenized_inputs)
+        tokenized_outputs = np.array(tokenized_outputs)
 
     return tokenized_inputs, tokenized_outputs, VOCAB_SIZE_WITH_START_AND_END
 
@@ -127,9 +131,9 @@ if __name__ == '__main__':
     # questions += questions2
     # answers += answers2
     # questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
-    questions, answers = load_translation_from_code()
-    # questions, answers = load_conversation_list_cn('Data/conv_zh.txt')
-    dataset, vocab_size = do_tokenize(questions, answers, task_conv_eng, False)
+    # questions, answers = load_translation_from_code()
+    questions, answers = load_conversation_list_cn('Data/conv_zh.txt')
+    dataset, vocab_size = do_tokenize(questions, answers, task_conv_chn, False)
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')

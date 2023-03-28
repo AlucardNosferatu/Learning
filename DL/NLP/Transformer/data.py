@@ -126,7 +126,7 @@ def load_translation_from_code():
         s = re.sub(r'[" "]+', " ", s)
         s = re.sub(r"[^a-zA-Z?.!,¿]+", " ", s)
         s = s.strip()
-        s = '<start> ' + s + ' <end>'
+        # s = '<start> ' + s + ' <end>'
         return s
 
     sentences = [
