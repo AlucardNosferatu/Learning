@@ -64,6 +64,8 @@ def load_conversations_from_csv(data_file_path):
 
     return inputs, outputs
 
+def load_conversation_cn(dialog_txt_filepath):
+    
 
 def read_translation(corpus_path):
     with open(corpus_path, mode='r', encoding='utf-8') as f:
@@ -97,6 +99,7 @@ def load_translation_from_code():
         s = s.strip()
         s = '<start> ' + s + ' <end>'
         return s
+
     sentences = [
         ("Do you want a cup of coffee?", "¿Quieres una taza de café?"),
         ("I've had coffee already.", "Ya tomé café."),

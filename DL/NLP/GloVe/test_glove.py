@@ -59,20 +59,27 @@ def embed_word(word_str, words_list=None, embeddings_array=None):
         return embeddings_array[word_index], words_list, embeddings_array
 
 
-def embed_sentences(sentence_padded_as_words_list, words_list=None, embeddings_array=None):
-    if words_list is None:
-        words_list = pickle.load(open('embeddings/words.pkl', "rb"))
-    if embeddings_array is None:
-        embeddings_array = np.load('embeddings/emb.npy')
-    merged_embedd = {}
-    for word, index in enumerate(words_list):
-        merged_embedd.__setitem__(word, embeddings_array[index])
-    sentence_vec_padded = [merged_embedd[word_str] for word_str in sentence_padded_as_words_list]
-    return sentence_vec_padded
+def embed_sentences(sentence_padded_as_words_list, words_list=None, embeddings_array=None, merged_embedding=None):
+    if merged_embedding is None:
+        if words_list is None:
+            words_list = pickle.load(open('embeddings/words.pkl', "rb"))
+        if embeddings_array is None:
+            embeddings_array = np.load('embeddings/emb.npy')
+        merged_embedding = {}
+        for index, word in enumerate(words_list):
+            merged_embedding.__setitem__(word, embeddings_array[index])
+    sentence_vec_padded = [merged_embedding[word_str] for word_str in sentence_padded_as_words_list]
+    return sentence_vec_padded, merged_embedding
 
 
 if __name__ == '__main__':
-    mdl = get_trained_model()
-    save_embeddings(mdl)
-    word_vec, _, _ = embed_word('reddit')
-    print(word_vec)
+    # mdl = get_trained_model()
+    # save_embeddings(mdl)
+    # word_vec, _, _ = embed_word('reddit')
+    test_sentence = ['<STA>', 'i', 'miss', 'you', 'a', 'lot', ',', 'do', 'you', 'know', 'that', '?', '<END>']
+    while len(test_sentence) < 20:
+        test_sentence.append('<PAD>')
+    sentence_vec, _ = embed_sentences(
+        test_sentence
+    )
+    print(sentence_vec)

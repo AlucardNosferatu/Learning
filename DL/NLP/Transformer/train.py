@@ -8,7 +8,7 @@ from tokenizer import do_tokenize, conv_task
 
 tf.keras.backend.clear_session()
 new_tokenizer = False
-increment = False
+increment = True
 increment = increment and not new_tokenizer
 
 
@@ -27,7 +27,7 @@ class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
 
     def __call__(self, step):
         arg1 = tf.math.rsqrt(step)
-        arg2 = step * (self.warmup_steps ** -3)
+        arg2 = step * (self.warmup_steps ** -1.5)
 
         return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
 
@@ -77,7 +77,6 @@ if __name__ == '__main__':
     for i in range(0, EPOCHS):
         print('当前周期：', i + 1)
         with tf.device('/gpu:0'):
-            mdl.fit(dataset, epochs=1)
-        if (i + 1) % SAV_P == 0:
+            mdl.fit(dataset, epochs=SAV_P)
             mdl.save_weights(WGT_PATH)
             print('训练进度已保存')
