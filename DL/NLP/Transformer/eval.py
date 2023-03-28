@@ -3,7 +3,7 @@ import tensorflow_datasets as tfds
 from Model.Transformer import transformer
 from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, MAX_SENTENCE_LENGTH, TOK_PATH, WGT_PATH
 from data import preprocess_sentence
-from tokenizer import conv_task
+from tokenizer import task_conv_eng
 
 old_tokenizer = tfds.deprecated.text.SubwordTextEncoder.load_from_file(TOK_PATH)
 
@@ -42,7 +42,7 @@ def predict(sentence, trained_model, START_TOKEN, END_TOKEN):
 
 
 if __name__ == '__main__':
-    tokenizer, START_TOK, END_TOK, VOCAB_SIZE = conv_task(None, None, False, False)
+    tokenizer, START_TOK, END_TOK, VOCAB_SIZE = task_conv_eng(None, None, False, False)
     model = transformer(
         vocab_size=VOCAB_SIZE,
         num_layers=N_LAYERS,

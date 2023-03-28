@@ -4,7 +4,7 @@ from Model.Transformer import transformer
 from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, SAV_P, WGT_PATH, SET_TCOUNT, WARM_UP_EPOCH
 from data import load_translation_from_lf
 from metric import loss_function, accuracy, perplexity
-from tokenizer import do_tokenize, conv_task
+from tokenizer import do_tokenize, task_conv_eng
 
 tf.keras.backend.clear_session()
 new_tokenizer = False
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     # answers += answers2
     questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
     print('原始数据已导入')
-    dataset, vocab_size = do_tokenize(questions[:SET_TCOUNT], answers[:SET_TCOUNT], conv_task, new_tokenizer)
+    dataset, vocab_size = do_tokenize(questions[:SET_TCOUNT], answers[:SET_TCOUNT], task_conv_eng, new_tokenizer)
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')

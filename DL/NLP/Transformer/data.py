@@ -1,9 +1,12 @@
 import json
 import re
 
+import jieba
 import pandas as pd
 import unicodedata
 from tqdm import tqdm
+
+from config import MAX_SENTENCE_LENGTH
 
 
 def clean_text(text):
@@ -64,8 +67,34 @@ def load_conversations_from_csv(data_file_path):
 
     return inputs, outputs
 
-def load_conversation_cn(dialog_txt_filepath):
-    
+
+def load_conversation_list_cn(dialog_txt_filepath):
+    def add_sta_and_end(region, mss=20):
+        region.insert(0, '<STA>')
+        region.append('<END>')
+        if len(region) > mss:
+            return None
+        else:
+            while len(region) < mss:
+                region.append('<PAD>')
+            return region
+    lines = open(dialog_txt_filepath, encoding='UTF-8').read().split('\n')
+    filtered_q, filtered_a = [], []
+    raw_data_len = len(lines) // 2
+    # 需要注意，两行话为一对话，第一句为问，第二句为答，总行数必须为偶数
+    for i in range(0, len(lines), 2):
+        # 使用jieba库进行中文分词
+        qlist, alist = jieba.lcut(lines[i]), jieba.lcut(lines[i + 1])
+        qlist = add_sta_and_end(qlist, MAX_SENTENCE_LENGTH)
+        alist = add_sta_and_end(alist, MAX_SENTENCE_LENGTH)
+        if qlist is not None and alist is not None:
+            filtered_q.append(qlist)
+            filtered_a.append(alist)
+    filt_data_len = len(filtered_q)
+    filtered = int((raw_data_len - filt_data_len) * 100 / raw_data_len)
+    print(str(filtered) + '% filtered from original data')
+    return filtered_q, filtered_a
+
 
 def read_translation(corpus_path):
     with open(corpus_path, mode='r', encoding='utf-8') as f:
