@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from Model.Transformer import transformer
-from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, SAV_P, WGT_PATH, SET_TCOUNT, WARM_UP_EPOCH
+from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT, WARM_UP_EPOCH, SAV_STP
 from data import load_translation_from_lf
 from metric import loss_function, accuracy, perplexity
 from tokenizer import do_tokenize, task_conv_eng
@@ -75,13 +75,13 @@ if __name__ == '__main__':
     ckpt = tf.keras.callbacks.ModelCheckpoint(
         WGT_PATH,
         monitor='loss',
-        verbose=0,
+        verbose=1,
         save_best_only=True,
         save_weights_only=True,
         mode='min',
-        period=SAV_P
+        save_freq=SAV_STP
     )
-    cb_list = []
+    cb_list = [ckpt]
     if increment:
         mdl.load_weights(WGT_PATH)
     with tf.device('/gpu:0'):
