@@ -72,11 +72,17 @@ if __name__ == '__main__':
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')
     mdl = prepare_model(vocab_size)
+    ckpt = tf.keras.callbacks.ModelCheckpoint(
+        WGT_PATH,
+        monitor='loss',
+        verbose=0,
+        save_best_only=True,
+        save_weights_only=True,
+        mode='min',
+        period=SAV_P
+    )
+    cb_list = []
     if increment:
         mdl.load_weights(WGT_PATH)
-    for i in range(0, EPOCHS):
-        print('当前周期：', i + 1)
-        with tf.device('/gpu:0'):
-            mdl.fit(dataset, epochs=SAV_P)
-            mdl.save_weights(WGT_PATH)
-            print('训练进度已保存')
+    with tf.device('/gpu:0'):
+        mdl.fit(dataset, epochs=EPOCHS, callbacks=cb_list)
