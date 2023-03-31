@@ -8,7 +8,7 @@ from tokenizer import do_tokenize, task_conv_eng
 
 tf.keras.backend.clear_session()
 new_tokenizer = False
-increment = True
+increment = False
 increment = increment and not new_tokenizer
 
 
@@ -75,11 +75,11 @@ if __name__ == '__main__':
     # questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
     # questions += questions2
     # answers += answers2
-    # questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
+    questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
     questions2, answers2 = load_translation_from_code()
     print('原始数据已导入')
-    q_test = fill_to_specified_size(questions2, SET_TCOUNT)
-    a_test = fill_to_specified_size(answers2, SET_TCOUNT)
+    q_test = fill_to_specified_size(questions, SET_TCOUNT)
+    a_test = fill_to_specified_size(answers, SET_TCOUNT)
     dataset, vocab_size = do_tokenize(q_test, a_test, task_conv_eng, new_tokenizer)
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
