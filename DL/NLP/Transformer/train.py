@@ -1,7 +1,8 @@
 import tensorflow as tf
 
 from Model.Transformer import transformer
-from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT, WARM_UP_EPOCH, SAV_STP
+from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT, SAV_STP
+# from config import WARM_UP_EPOCH
 from data import load_translation_from_lf, load_translation_from_code
 from metric import loss_function, accuracy, perplexity
 from tokenizer import do_tokenize, task_conv_eng
@@ -12,24 +13,24 @@ increment = False
 increment = increment and not new_tokenizer
 
 
-class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
-
-    def get_config(self):
-        pass
-
-    def __init__(self, d_model, warmup_steps=WARM_UP_EPOCH):
-        super(CustomSchedule, self).__init__()
-
-        self.d_model = d_model
-        self.d_model = tf.cast(self.d_model, tf.float32)
-
-        self.warmup_steps = warmup_steps
-
-    def __call__(self, step):
-        arg1 = tf.math.rsqrt(step)
-        arg2 = step * (self.warmup_steps ** -1.5)
-
-        return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
+# class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
+#
+#     def get_config(self):
+#         pass
+#
+#     def __init__(self, d_model, warmup_steps=WARM_UP_EPOCH):
+#         super(CustomSchedule, self).__init__()
+#
+#         self.d_model = d_model
+#         self.d_model = tf.cast(self.d_model, tf.float32)
+#
+#         self.warmup_steps = warmup_steps
+#
+#     def __call__(self, step):
+#         arg1 = tf.math.rsqrt(step)
+#         arg2 = step * (self.warmup_steps ** -1.5)
+#
+#         return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
 
 
 def prepare_model(v_size):
@@ -41,7 +42,8 @@ def prepare_model(v_size):
         num_heads=N_HEADS,
         dropout=DROP)
     print('模型初始化完成')
-    learning_rate = CustomSchedule(D_MODEL)
+    # learning_rate = CustomSchedule(D_MODEL)
+    learning_rate = 0.0001
     print('学习率规划完成')
     optimizer = tf.keras.optimizers.Adam(
         learning_rate,
