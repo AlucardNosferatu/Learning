@@ -119,16 +119,15 @@ def load_translation_from_lf(eng_path, des_path):
 
 
 def load_translation_from_code():
-    def preprocess(s):
-        # for details, see https://www.tensorflow.org/alpha/tutorials/sequences/nmt_with_attention
-        s = ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
-        s = re.sub(r"([?.!,¿])", r" \1 ", s)
-        s = re.sub(r'[" "]+', " ", s)
-        s = re.sub(r"[^a-zA-Z?.!,¿]+", " ", s)
-        s = s.strip()
-        # s = '<start> ' + s + ' <end>'
-        return s
-
+    # def preprocess(s):
+    #     # for details, see https://www.tensorflow.org/alpha/tutorials/sequences/nmt_with_attention
+    #     s = ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+    #     s = re.sub(r"([?.!,¿])", r" \1 ", s)
+    #     s = re.sub(r'[" "]+', " ", s)
+    #     s = re.sub(r"[^a-zA-Z?.!,¿]+", " ", s)
+    #     s = s.strip()
+    #     # s = '<start> ' + s + ' <end>'
+    #     return s
     sentences = [
         ("Do you want a cup of coffee?", "¿Quieres una taza de café?"),
         ("I've had coffee already.", "Ya tomé café."),
@@ -154,9 +153,10 @@ def load_translation_from_code():
         ("There are many kinds of coffee.", "Hay muchas variedades de café."),
         ("I will make some coffee.", "Prepararé algo de café.")
     ]
-    tagged_sentences = [(preprocess(source), preprocess(target)) for (source, target) in sentences]
+    # tagged_sentences = [(preprocess(source), preprocess(target)) for (source, target) in sentences]
+    tagged_sentences = sentences
     source_sentences, target_sentences = list(zip(*tagged_sentences))
-    return source_sentences, target_sentences
+    return list(source_sentences), list(target_sentences)
 
 
 if __name__ == '__main__':

@@ -77,6 +77,16 @@ def task_conv_chn(inputs, outputs, new_tokenizer=False, print_sample=True):
     return [index2word, word2index, freq_dist], START_TOKEN, END_TOKEN, VOCAB_SIZE_WITH_START_AND_END
 
 
+def padding(tokenizer, tokenized_seq):
+    if type(tokenizer) is not list:
+        # pad tokenized sentences
+        tokenized_seq = tf.keras.preprocessing.sequence.pad_sequences(
+            tokenized_seq, maxlen=MAX_SENTENCE_LENGTH, padding='post')
+    else:
+        tokenized_seq = np.array(tokenized_seq)
+    return tokenized_seq
+
+
 def tokenize_and_filter(inputs, outputs, task_func, new_tokenizer):
     tokenizer, START_TOKEN, END_TOKEN, VOCAB_SIZE_WITH_START_AND_END = task_func(inputs, outputs, new_tokenizer)
     tokenized_inputs, tokenized_outputs = [], []
@@ -93,16 +103,8 @@ def tokenize_and_filter(inputs, outputs, task_func, new_tokenizer):
         if len(sentence1) <= MAX_SENTENCE_LENGTH and len(sentence2) <= MAX_SENTENCE_LENGTH:
             tokenized_inputs.append(sentence1)
             tokenized_outputs.append(sentence2)
-    if type(tokenizer) is not list:
-        # pad tokenized sentences
-        tokenized_inputs = tf.keras.preprocessing.sequence.pad_sequences(
-            tokenized_inputs, maxlen=MAX_SENTENCE_LENGTH, padding='post')
-        tokenized_outputs = tf.keras.preprocessing.sequence.pad_sequences(
-            tokenized_outputs, maxlen=MAX_SENTENCE_LENGTH, padding='post')
-    else:
-        tokenized_inputs = np.array(tokenized_inputs)
-        tokenized_outputs = np.array(tokenized_outputs)
-
+    tokenized_inputs = padding(tokenizer, tokenized_inputs)
+    tokenized_outputs = padding(tokenizer, tokenized_outputs)
     return tokenized_inputs, tokenized_outputs, VOCAB_SIZE_WITH_START_AND_END
 
 

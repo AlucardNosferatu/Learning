@@ -27,5 +27,5 @@ class PositionalEncoding(tf.keras.layers.Layer):
         super(PositionalEncoding, self).__init__()
         self.pos_encoding = positional_encoding(position, d_model)
 
-    def call(self, inputs):
+    def call(self, inputs, **kwargs):
         return inputs + self.pos_encoding[:, :tf.shape(inputs)[1], :]

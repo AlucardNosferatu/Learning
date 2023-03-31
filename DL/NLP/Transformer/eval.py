@@ -1,20 +1,15 @@
 import tensorflow as tf
-import tensorflow_datasets as tfds
+
 from Model.Transformer import transformer
-from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, MAX_SENTENCE_LENGTH, TOK_PATH, WGT_PATH
+from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, MAX_SENTENCE_LENGTH, WGT_PATH
 from data import preprocess_sentence
-from tokenizer import task_conv_eng
-
-old_tokenizer = tfds.deprecated.text.SubwordTextEncoder.load_from_file(TOK_PATH)
+from tokenizer import task_conv_eng, padding
 
 
-def evaluate(sentence, trained_model, START_TOKEN, END_TOKEN):
+def evaluate(sentence, trained_model, START_TOKEN, END_TOKEN, tokenizer):
     sentence = preprocess_sentence(sentence)
-
-    sentence = tf.expand_dims(START_TOKEN + old_tokenizer.encode(sentence) + END_TOKEN, axis=0)
-
+    sentence = padding(tokenizer, [START_TOKEN + tokenizer.encode(sentence) + END_TOKEN])
     output = tf.expand_dims(START_TOKEN, 0)
-
     for i in range(MAX_SENTENCE_LENGTH):
         predictions = trained_model(inputs=[sentence, output], training=False)
 
@@ -29,11 +24,12 @@ def evaluate(sentence, trained_model, START_TOKEN, END_TOKEN):
     return tf.squeeze(output, axis=0)
 
 
-def predict(sentence, trained_model, START_TOKEN, END_TOKEN):
-    prediction = evaluate(sentence, trained_model, START_TOKEN, END_TOKEN)
+def predict(sentence, trained_model, START_TOKEN, END_TOKEN, tokenizer):
+    prediction = evaluate(sentence, trained_model, START_TOKEN, END_TOKEN, tokenizer)
 
-    predicted_sentence = old_tokenizer.decode(
-        [i for i in prediction if i < old_tokenizer.vocab_size])
+    predicted_sentence = tokenizer.decode(
+        [i for i in prediction if i < tokenizer.vocab_size]
+    )
 
     # print('Input: {}'.format(sentence))
     # print('Output: {}'.format(predicted_sentence))
@@ -42,7 +38,7 @@ def predict(sentence, trained_model, START_TOKEN, END_TOKEN):
 
 
 if __name__ == '__main__':
-    tokenizer, START_TOK, END_TOK, VOCAB_SIZE = task_conv_eng(None, None, False, False)
+    tok, START_TOK, END_TOK, VOCAB_SIZE = task_conv_eng(None, None, False, False)
     model = transformer(
         vocab_size=VOCAB_SIZE,
         num_layers=N_LAYERS,
@@ -56,6 +52,6 @@ if __name__ == '__main__':
     input_str = "Why are no-smoking areas not enforced?"
     while input_str != '':
         print('输入：', input_str)
-        output_str = predict(input_str, model, START_TOK, END_TOK)
+        output_str = predict(input_str, model, START_TOK, END_TOK, tok)
         print('输出：', output_str)
         input_str = input()

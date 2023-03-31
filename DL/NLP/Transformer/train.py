@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from Model.Transformer import transformer
 from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT, WARM_UP_EPOCH, SAV_STP
-from data import load_translation_from_lf
+from data import load_translation_from_lf, load_translation_from_code
 from metric import loss_function, accuracy, perplexity
 from tokenizer import do_tokenize, task_conv_eng
 
@@ -65,16 +65,19 @@ if __name__ == '__main__':
     # questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
     # questions += questions2
     # answers += answers2
-    questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
+    # questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
+    questions2, answers2 = load_translation_from_code()
     print('原始数据已导入')
-    dataset, vocab_size = do_tokenize(questions[:SET_TCOUNT], answers[:SET_TCOUNT], task_conv_eng, new_tokenizer)
+    q_test = [questions2[0]] * SET_TCOUNT
+    a_test = [answers2[0]] * SET_TCOUNT
+    dataset, vocab_size = do_tokenize(q_test, a_test, task_conv_eng, new_tokenizer)
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')
     mdl = prepare_model(vocab_size)
     ckpt = tf.keras.callbacks.ModelCheckpoint(
         WGT_PATH,
-        monitor='loss',
+        monitor='perplexity',
         verbose=1,
         save_best_only=True,
         save_weights_only=True,
