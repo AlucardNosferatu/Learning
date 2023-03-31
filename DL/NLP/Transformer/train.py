@@ -60,6 +60,16 @@ def prepare_model(v_size):
     return model
 
 
+def fill_to_specified_size(seqs, spec_size):
+    while len(seqs) > spec_size:
+        seqs.pop(-1)
+    prev_size = len(seqs)
+    while len(seqs) < spec_size:
+        dist = len(seqs) - prev_size
+        seqs.append(seqs[dist])
+    return seqs
+
+
 if __name__ == '__main__':
     # questions, answers = load_conversations_from_json('Data/dataset.json')
     # questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
@@ -68,8 +78,8 @@ if __name__ == '__main__':
     # questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
     questions2, answers2 = load_translation_from_code()
     print('原始数据已导入')
-    q_test = [questions2[0]] * SET_TCOUNT
-    a_test = [answers2[0]] * SET_TCOUNT
+    q_test = fill_to_specified_size(questions2, SET_TCOUNT)
+    a_test = fill_to_specified_size(answers2, SET_TCOUNT)
     dataset, vocab_size = do_tokenize(q_test, a_test, task_conv_eng, new_tokenizer)
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
