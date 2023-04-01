@@ -1,36 +1,15 @@
 import tensorflow as tf
 
 from Model.Transformer import transformer
-from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT, SAV_STP
-# from config import WARM_UP_EPOCH
+from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT
 from data import load_translation_from_lf, load_translation_from_code
 from metric import loss_function, accuracy, perplexity
 from tokenizer import do_tokenize, task_conv_eng
 
 tf.keras.backend.clear_session()
 new_tokenizer = False
-increment = False
+increment = True
 increment = increment and not new_tokenizer
-
-
-# class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
-#
-#     def get_config(self):
-#         pass
-#
-#     def __init__(self, d_model, warmup_steps=WARM_UP_EPOCH):
-#         super(CustomSchedule, self).__init__()
-#
-#         self.d_model = d_model
-#         self.d_model = tf.cast(self.d_model, tf.float32)
-#
-#         self.warmup_steps = warmup_steps
-#
-#     def __call__(self, step):
-#         arg1 = tf.math.rsqrt(step)
-#         arg2 = step * (self.warmup_steps ** -1.5)
-#
-#         return tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2)
 
 
 def prepare_model(v_size):
@@ -42,8 +21,7 @@ def prepare_model(v_size):
         num_heads=N_HEADS,
         dropout=DROP)
     print('模型初始化完成')
-    # learning_rate = CustomSchedule(D_MODEL)
-    learning_rate = 0.0001
+    learning_rate = 1e-16
     print('学习率规划完成')
     optimizer = tf.keras.optimizers.Adam(
         learning_rate,
@@ -89,12 +67,12 @@ if __name__ == '__main__':
     mdl = prepare_model(vocab_size)
     ckpt = tf.keras.callbacks.ModelCheckpoint(
         WGT_PATH,
-        monitor='perplexity',
+        monitor='loss',
         verbose=1,
         save_best_only=True,
         save_weights_only=True,
         mode='min',
-        save_freq=SAV_STP
+        save_freq='epoch'
     )
     cb_list = [ckpt]
     if increment:
