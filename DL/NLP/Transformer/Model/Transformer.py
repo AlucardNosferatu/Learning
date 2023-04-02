@@ -5,13 +5,15 @@ from Model.Encoder import encoder
 from Model.Masking import create_padding_mask, create_look_ahead_mask
 
 
-def transformer(vocab_size,
-                num_layers,
-                units,
-                d_model,
-                num_heads,
-                dropout,
-                name="transformer"):
+def transformer(
+        vocab_size,
+        num_layers,
+        units,
+        d_model,
+        num_heads,
+        dropout,
+        name="transformer"
+):
     inputs = tf.keras.Input(shape=(None,), name="inputs")
     dec_inputs = tf.keras.Input(shape=(None,), name="dec_inputs")
 
