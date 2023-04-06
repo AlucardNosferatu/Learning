@@ -54,7 +54,7 @@ def main():
         dropout=DROP)
     print('模型初始化完成')
     model.load_weights(WGT_PATH)
-    input_str = "Why are no-smoking areas not enforced?"
+    input_str = "老婆，我去上班了。"
     while input_str != '':
         print('输入：', input_str)
         output_str = predict(input_str, model, START_TOK, END_TOK, tok)
