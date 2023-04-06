@@ -3,7 +3,7 @@ import tensorflow as tf
 
 from Model.Transformer import transformer
 from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, MAX_SENTENCE_LENGTH, WGT_PATH
-from data import preprocess_sentence, add_sta_and_end_cn
+from data import preprocess_sentence
 # noinspection PyUnresolvedReferences
 from tokenizer import task_conv_eng, padding, task_conv_chn
 
@@ -11,9 +11,15 @@ from tokenizer import task_conv_eng, padding, task_conv_chn
 def evaluate(sent, trained_model, start_token, end_token, tok):
     if type(tok) is list:
         # todo: add preprocess for CN question
+        start_token = [start_token]
+        end_token = [end_token]
         sent = jieba.lcut(sent)
-        sent = add_sta_and_end_cn(sent, MAX_SENTENCE_LENGTH)
         sent = [tok[1][word] for word in sent if word in list(tok[1].keys())]
+        while len(sent) > MAX_SENTENCE_LENGTH - 2:
+            sent.pop(-1)
+        sent = [start_token + sent + end_token]
+        while len(sent) < MAX_SENTENCE_LENGTH:
+            sent.append(tok[1]['<PAD>'])
         sent = padding(tok, sent)
     else:
         sent = preprocess_sentence(sent)
