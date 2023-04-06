@@ -1,14 +1,19 @@
+import os
+
 import tensorflow as tf
+from tqdm import tqdm
 
 from Model.Transformer import transformer
 from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT
-from data import load_translation_from_lf, load_translation_from_code
+# noinspection PyUnresolvedReferences
+from data import load_translation_from_lf, load_translation_from_code, load_conversation_list_cn
 from metric import loss_function, accuracy, perplexity
-from tokenizer import do_tokenize, task_conv_eng
+# noinspection PyUnresolvedReferences
+from tokenizer import do_tokenize, task_conv_eng, task_conv_chn
 
 tf.keras.backend.clear_session()
 new_tokenizer = False
-increment = True
+increment = False
 increment = increment and not new_tokenizer
 
 
@@ -55,12 +60,21 @@ if __name__ == '__main__':
     # questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
     # questions += questions2
     # answers += answers2
-    questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
-    questions2, answers2 = load_translation_from_code()
-    print('原始数据已导入')
+    # questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
+    # questions2, answers2 = load_translation_from_code()
+    # print('原始数据已导入')
+    questions, answers = [], []
+    text_dir = 'Data_xiaoice/texts'
+    files = os.listdir(text_dir)
+    for file in tqdm(files):
+        if file.endswith('_mat.txt'):
+            q, a = load_conversation_list_cn(os.path.join(text_dir, file))
+            questions += q
+            answers += a
+
     q_test = fill_to_specified_size(questions, SET_TCOUNT)
     a_test = fill_to_specified_size(answers, SET_TCOUNT)
-    dataset, vocab_size = do_tokenize(q_test, a_test, task_conv_eng, new_tokenizer)
+    dataset, vocab_size = do_tokenize(q_test, a_test, task_conv_chn, new_tokenizer)
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')

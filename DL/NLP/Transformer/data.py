@@ -4,7 +4,7 @@ import re
 
 import jieba
 import pandas as pd
-import unicodedata
+# import unicodedata
 from tqdm import tqdm
 
 from config import MAX_SENTENCE_LENGTH
@@ -44,8 +44,8 @@ def preprocess_sentence(sentence):
 
 
 def load_conversations_from_json(data_file_path):
-    file = open(data_file_path)
-    data_json = json.load(file)
+    json_file = open(data_file_path)
+    data_json = json.load(json_file)
     count = 0
     inputs, outputs = [], []
     for convo in tqdm(data_json):

@@ -9,7 +9,10 @@ def encoder_layer(units, d_model, num_heads, dropout, name="encoder_layer"):
     padding_mask = tf.keras.Input(shape=(1, 1, None), name="padding_mask")
 
     attention = MultiHeadAttention(
-        d_model, num_heads, name="attention").call(
+        d_model,
+        num_heads,
+        name="attention"
+    ).call(
         {
             'query': inputs,
             'key': inputs,

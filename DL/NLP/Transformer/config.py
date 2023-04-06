@@ -7,18 +7,17 @@ DROP = 0.1
 EPOCHS = 100000
 MAX_SENTENCE_LENGTH = 20
 MIN_SENTENCE_LENGTH = 5
-SAV_P = 1
 
 # SAVE_PERIOD
 TGT_VOC_SIZE = 1024 * 4
 DATA_BUFFER_SIZE = 10240
 
 # TOK_PATH = 'Save/Chat/tokenizer'
-# TOK_PATH = 'Save/Chat_CN/tokenizer'
-TOK_PATH = 'Save/Translate/tokenizer'
+TOK_PATH = 'Save/Chat_CN/tokenizer'
+# TOK_PATH = 'Save/Translate/tokenizer'
 # WGT_PATH = 'Save/Chat/bot_4'
-# WGT_PATH = 'Save/Chat_CN/bot_4'
-WGT_PATH = 'Save/Translate/bot_4'
+WGT_PATH = 'Save/Chat_CN/bot_4'
+# WGT_PATH = 'Save/Translate/bot_4'
 
 SET_TCOUNT = 5000
 # TCOUNT = TRAIN_COUNT

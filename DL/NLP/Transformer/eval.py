@@ -6,17 +6,17 @@ from data import preprocess_sentence
 from tokenizer import task_conv_eng, padding
 
 
-def evaluate(sentence, trained_model, START_TOKEN, END_TOKEN, tokenizer):
+def evaluate(sentence, trained_model, start_token, end_token, tokenizer):
     sentence = preprocess_sentence(sentence)
-    sentence = padding(tokenizer, [START_TOKEN + tokenizer.encode(sentence) + END_TOKEN])
-    output = tf.expand_dims(START_TOKEN, 0)
+    sentence = padding(tokenizer, [start_token + tokenizer.encode(sentence) + end_token])
+    output = tf.expand_dims(start_token, 0)
     for i in range(MAX_SENTENCE_LENGTH):
         predictions = trained_model(inputs=[sentence, output], training=False)
 
         predictions = predictions[:, -1:, :]
         predicted_id = tf.cast(tf.argmax(predictions, axis=-1), tf.int32)
 
-        if tf.equal(predicted_id, END_TOKEN[0]):
+        if tf.equal(predicted_id, end_token[0]):
             break
 
         output = tf.concat([output, predicted_id], axis=-1)
@@ -24,8 +24,8 @@ def evaluate(sentence, trained_model, START_TOKEN, END_TOKEN, tokenizer):
     return tf.squeeze(output, axis=0)
 
 
-def predict(sentence, trained_model, START_TOKEN, END_TOKEN, tokenizer):
-    prediction = evaluate(sentence, trained_model, START_TOKEN, END_TOKEN, tokenizer)
+def predict(sentence, trained_model, start_token, end_token, tokenizer):
+    prediction = evaluate(sentence, trained_model, start_token, end_token, tokenizer)
 
     predicted_sentence = tokenizer.decode(
         [i for i in prediction if i < tokenizer.vocab_size]

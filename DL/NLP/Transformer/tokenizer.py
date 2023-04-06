@@ -1,4 +1,5 @@
 import itertools
+import os
 import pickle
 
 import nltk
@@ -8,6 +9,7 @@ import tensorflow_datasets as tfds
 from tqdm import tqdm
 
 from config import MAX_SENTENCE_LENGTH, SET_BS, TGT_VOC_SIZE, DATA_BUFFER_SIZE, TOK_PATH
+# noinspection PyUnresolvedReferences
 from data import load_translation_from_code, load_conversation_list_cn
 
 
@@ -33,10 +35,10 @@ def task_conv_eng(inputs, outputs, new_tokenizer=False, print_sample=True):
     else:
         tokenizer = tfds.deprecated.text.SubwordTextEncoder.load_from_file(TOK_PATH)
         print('词向量生成器已读取')
-    START_TOKEN, END_TOKEN = [tokenizer.vocab_size], [tokenizer.vocab_size + 1]
+    start_token, end_token = [tokenizer.vocab_size], [tokenizer.vocab_size + 1]
 
-    VOCAB_SIZE_WITH_START_AND_END = tokenizer.vocab_size + 2
-    return tokenizer, START_TOKEN, END_TOKEN, VOCAB_SIZE_WITH_START_AND_END
+    vocab_size_with_start_and_end = tokenizer.vocab_size + 2
+    return tokenizer, start_token, end_token, vocab_size_with_start_and_end
 
 
 def task_conv_chn(inputs, outputs, new_tokenizer=False, print_sample=True):
@@ -71,10 +73,10 @@ def task_conv_chn(inputs, outputs, new_tokenizer=False, print_sample=True):
         with open(TOK_PATH + '_fdist.pkl', 'rb') as f:
             freq_dist = pickle.load(f)
         print('词向量生成器已读取')
-    START_TOKEN, END_TOKEN = word2index['<STA>'], word2index['<END>']
+    start_token, end_token = word2index['<STA>'], word2index['<END>']
 
-    VOCAB_SIZE_WITH_START_AND_END = len(index2word)
-    return [index2word, word2index, freq_dist], START_TOKEN, END_TOKEN, VOCAB_SIZE_WITH_START_AND_END
+    vocab_size_with_start_and_end = len(index2word)
+    return [index2word, word2index, freq_dist], start_token, end_token, vocab_size_with_start_and_end
 
 
 def padding(tokenizer, tokenized_seq):
@@ -88,7 +90,7 @@ def padding(tokenizer, tokenized_seq):
 
 
 def tokenize_and_filter(inputs, outputs, task_func, new_tokenizer):
-    tokenizer, START_TOKEN, END_TOKEN, VOCAB_SIZE_WITH_START_AND_END = task_func(inputs, outputs, new_tokenizer)
+    tokenizer, start_token, end_token, vocab_size_with_start_and_end = task_func(inputs, outputs, new_tokenizer)
     tokenized_inputs, tokenized_outputs = [], []
     for (sentence1, sentence2) in tqdm(zip(inputs, outputs)):
         # tokenize sentence
@@ -97,15 +99,15 @@ def tokenize_and_filter(inputs, outputs, task_func, new_tokenizer):
             sentence1 = [word2index[word] for word in sentence1]
             sentence2 = [word2index[word] for word in sentence2]
         else:
-            sentence1 = START_TOKEN + tokenizer.encode(sentence1) + END_TOKEN
-            sentence2 = START_TOKEN + tokenizer.encode(sentence2) + END_TOKEN
+            sentence1 = start_token + tokenizer.encode(sentence1) + end_token
+            sentence2 = start_token + tokenizer.encode(sentence2) + end_token
         # check tokenized sentence max length
         if len(sentence1) <= MAX_SENTENCE_LENGTH and len(sentence2) <= MAX_SENTENCE_LENGTH:
             tokenized_inputs.append(sentence1)
             tokenized_outputs.append(sentence2)
     tokenized_inputs = padding(tokenizer, tokenized_inputs)
     tokenized_outputs = padding(tokenizer, tokenized_outputs)
-    return tokenized_inputs, tokenized_outputs, VOCAB_SIZE_WITH_START_AND_END
+    return tokenized_inputs, tokenized_outputs, vocab_size_with_start_and_end
 
 
 def do_tokenize(que, ans, task_func, new_tokenizer):
@@ -134,8 +136,18 @@ if __name__ == '__main__':
     # answers += answers2
     # questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
     # questions, answers = load_translation_from_code()
-    questions, answers = load_conversation_list_cn('Data/conv_zh.txt')
-    dataset, vocab_size = do_tokenize(questions, answers, task_conv_chn, False)
+    # questions, answers = load_conversation_list_cn('Data/conv_zh.txt')
+
+    questions, answers = [], []
+    text_dir = 'Data_xiaoice/texts'
+    files = os.listdir(text_dir)
+    for file in tqdm(files):
+        if file.endswith('_mat.txt'):
+            q, a = load_conversation_list_cn(os.path.join(text_dir, file))
+            questions += q
+            answers += a
+
+    dataset, vocab_size = do_tokenize(questions, answers, task_conv_chn, new_tokenizer=True)
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')
