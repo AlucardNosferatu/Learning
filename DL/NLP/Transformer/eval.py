@@ -38,7 +38,11 @@ def evaluate(sent, trained_model, start_token, end_token, tok):
 def predict(sentence, trained_model, start_token, end_token, tokenizer):
     prediction = evaluate(sentence, trained_model, start_token, end_token, tokenizer)
     if type(tokenizer) is list:
-        predicted_sentence = [tokenizer[0][index] for index in prediction]
+        predicted_sentence = ''.join(
+            [
+                tokenizer[0][index] for index in prediction if tokenizer[0][index] not in ['<STA>', '<END>', '<PAD>']
+            ]
+        )
     else:
         predicted_sentence = tokenizer.decode(
             [i for i in prediction if i < tokenizer.vocab_size]
