@@ -19,7 +19,7 @@ def evaluate(sent, trained_model, start_token, end_token, tok):
             sent.pop(-1)
         sent = [start_token + sent + end_token]
         while len(sent) < MAX_SENTENCE_LENGTH:
-            sent.append(tok[1]['<PAD>'])
+            sent[0].append(tok[1]['<PAD>'])
         sent = padding(tok, sent)
     else:
         sent = preprocess_sentence(sent)
