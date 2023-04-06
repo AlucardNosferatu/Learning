@@ -69,17 +69,18 @@ def load_conversations_from_csv(data_file_path):
     return inputs, outputs
 
 
-def load_conversation_list_cn(dialog_txt_filepath):
-    def add_sta_and_end(region, mss=20):
-        region.insert(0, '<STA>')
-        region.append('<END>')
-        if len(region) > mss:
-            return None
-        else:
-            while len(region) < mss:
-                region.append('<PAD>')
-            return region
+def add_sta_and_end_cn(region, mss=20):
+    region.insert(0, '<STA>')
+    region.append('<END>')
+    if len(region) > mss:
+        return None
+    else:
+        while len(region) < mss:
+            region.append('<PAD>')
+        return region
 
+
+def load_conversation_list_cn(dialog_txt_filepath):
     print('Current file:', dialog_txt_filepath)
     lines = open(dialog_txt_filepath, encoding='UTF-8').read().split('\n')
     lines.pop(-1)
@@ -90,8 +91,8 @@ def load_conversation_list_cn(dialog_txt_filepath):
     for i in range(0, len(lines), 2):
         # 使用jieba库进行中文分词
         qlist, alist = jieba.lcut(lines[i]), jieba.lcut(lines[i + 1])
-        qlist = add_sta_and_end(qlist, MAX_SENTENCE_LENGTH)
-        alist = add_sta_and_end(alist, MAX_SENTENCE_LENGTH)
+        qlist = add_sta_and_end_cn(qlist, MAX_SENTENCE_LENGTH)
+        alist = add_sta_and_end_cn(alist, MAX_SENTENCE_LENGTH)
         if qlist is not None and alist is not None:
             filtered_q.append(qlist)
             filtered_a.append(alist)

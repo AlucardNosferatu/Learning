@@ -3,7 +3,7 @@ import tensorflow as tf
 
 from Model.Transformer import transformer
 from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, MAX_SENTENCE_LENGTH, WGT_PATH
-from data import preprocess_sentence
+from data import preprocess_sentence, add_sta_and_end_cn
 # noinspection PyUnresolvedReferences
 from tokenizer import task_conv_eng, padding, task_conv_chn
 
@@ -12,10 +12,9 @@ def evaluate(sent, trained_model, start_token, end_token, tok):
     if type(tok) is list:
         # todo: add preprocess for CN question
         sent = jieba.lcut(sent)
-        sent = padding(
-            tok,
-            [[start_token] + [tok[1][word] for word in sent if word in list(tok[1].keys())] + [end_token]]
-        )
+        sent = add_sta_and_end_cn(sent, MAX_SENTENCE_LENGTH)
+        sent = [tok[1][word] for word in sent if word in list(tok[1].keys())]
+        sent = padding(tok, sent)
     else:
         sent = preprocess_sentence(sent)
         sent = padding(tok, [start_token + tok.encode(sent) + end_token])
