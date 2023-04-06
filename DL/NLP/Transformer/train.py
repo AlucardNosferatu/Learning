@@ -12,9 +12,6 @@ from metric import loss_function, accuracy, perplexity, LossHistory
 from tokenizer import do_tokenize, task_conv_eng, task_conv_chn
 
 tf.keras.backend.clear_session()
-new_tokenizer = False
-increment = False
-increment = increment and not new_tokenizer
 
 
 def prepare_model(v_size):
@@ -55,7 +52,8 @@ def fill_to_specified_size(seqs, spec_size):
     return seqs
 
 
-def main():
+def main(new_tokenizer=False, increment=False):
+    increment = increment and not new_tokenizer
     # questions, answers = load_conversations_from_json('Data/dataset.json')
     # questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
     # questions += questions2
