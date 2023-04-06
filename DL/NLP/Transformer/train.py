@@ -13,7 +13,7 @@ from tokenizer import do_tokenize, task_conv_eng, task_conv_chn
 
 tf.keras.backend.clear_session()
 new_tokenizer = False
-increment = False
+increment = True
 increment = increment and not new_tokenizer
 
 
@@ -72,8 +72,11 @@ if __name__ == '__main__':
             questions += q
             answers += a
 
+    # q_test = questions
+    # a_test = answers
     q_test = fill_to_specified_size(questions, SET_TCOUNT)
     a_test = fill_to_specified_size(answers, SET_TCOUNT)
+
     dataset, vocab_size = do_tokenize(q_test, a_test, task_conv_chn, new_tokenizer)
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)

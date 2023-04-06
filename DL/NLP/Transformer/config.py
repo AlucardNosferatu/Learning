@@ -1,4 +1,4 @@
-N_LAYERS = 4
+N_LAYERS = 8
 D_MODEL = 64
 N_HEADS = 2
 UNITS = 32
@@ -19,7 +19,7 @@ TOK_PATH = 'Save/Chat_CN/tokenizer'
 WGT_PATH = 'Save/Chat_CN/bot_4'
 # WGT_PATH = 'Save/Translate/bot_4'
 
-SET_TCOUNT = 5000
+SET_TCOUNT = 1000
 # TCOUNT = TRAIN_COUNT
 SET_BS = 256
 # BS = BATCH_SIZE
