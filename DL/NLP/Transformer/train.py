@@ -26,7 +26,7 @@ def prepare_model(v_size):
         num_heads=N_HEADS,
         dropout=DROP)
     print('模型初始化完成')
-    learning_rate = 0.01
+    learning_rate = 0.0001
     print('学习率规划完成')
     optimizer = tf.keras.optimizers.Adam(
         learning_rate,
