@@ -20,6 +20,8 @@ SpringMVC/
 *__pycache__/
 DL/NLP/Transformer/Save/
 DL/NLP/Transformer/Data/
+DL/NLP/Transformer/Data_xiaoice/texts/*.txt
 DL/NLP/GloVe/data/
 DL/NLP/GloVe/embeddings/
 DL/NLP/GloVe/logs/
+

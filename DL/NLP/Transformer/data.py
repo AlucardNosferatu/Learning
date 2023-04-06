@@ -1,4 +1,5 @@
 import json
+import os
 import re
 
 import jieba
@@ -78,7 +79,11 @@ def load_conversation_list_cn(dialog_txt_filepath):
             while len(region) < mss:
                 region.append('<PAD>')
             return region
+
+    print('Current file:', dialog_txt_filepath)
     lines = open(dialog_txt_filepath, encoding='UTF-8').read().split('\n')
+    lines.pop(-1)
+    lines = [line.split('\t')[1] for line in lines]
     filtered_q, filtered_a = [], []
     raw_data_len = len(lines) // 2
     # 需要注意，两行话为一对话，第一句为问，第二句为答，总行数必须为偶数
@@ -160,6 +165,14 @@ def load_translation_from_code():
 
 
 if __name__ == '__main__':
-    questions, answers = load_conversations_from_json('Data/dataset.json')
-    questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
+    questions, answers = [], []
+    text_dir = 'Data_xiaoice/texts'
+    files = os.listdir(text_dir)
+    for file in files:
+        if file.endswith('_mat.txt'):
+            q, a = load_conversation_list_cn(os.path.join(text_dir, file))
+            questions += q
+            answers += a
+    # questions, answers = load_conversations_from_json('Data/dataset.json')
+    # questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
     print('对话数据读取完成')
