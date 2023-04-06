@@ -26,7 +26,7 @@ def decoder_layer(units, d_model, num_heads, dropout, name="decoder_layer"):
 
     attention2 = MultiHeadAttention(
         d_model,
-        num_heads, 
+        num_heads,
         name="attention_2"
     ).call({
         'query': attention1,
