@@ -7,7 +7,7 @@ from Model.Transformer import transformer
 from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT
 # noinspection PyUnresolvedReferences
 from data import load_translation_from_lf, load_translation_from_code, load_conversation_list_cn
-from metric import loss_function, accuracy, perplexity
+from metric import loss_function, accuracy, perplexity, LossHistory
 # noinspection PyUnresolvedReferences
 from tokenizer import do_tokenize, task_conv_eng, task_conv_chn
 
@@ -91,7 +91,8 @@ if __name__ == '__main__':
         mode='min',
         save_freq='epoch'
     )
-    cb_list = [ckpt]
+    log_metric = LossHistory()
+    cb_list = [ckpt, log_metric]
     if increment:
         mdl.load_weights(WGT_PATH)
     with tf.device('/gpu:0'):
