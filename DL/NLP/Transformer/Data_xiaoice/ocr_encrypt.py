@@ -22,11 +22,16 @@ def decrypt_file(key, tgt_txt):
         f.write(lines)
 
 
-# hint: What happened on December 24th, 2029?
-encrypt_key = input('input encryption key string:')
-files = os.listdir('texts')
-for file in tqdm(files):
-    # if file.endswith('.txt'):
-    #     encrypt_file(encrypt_key, os.path.join('texts', file))
-    if file.endswith('.xmas'):
-        decrypt_file(encrypt_key, os.path.join('texts', file))
+def conversion(dec=True, enc=False):
+    # hint: What happened on December 24th, 2029?
+    encrypt_key = input('input encryption key string:')
+    files = os.listdir('texts')
+    for file in tqdm(files):
+        if file.endswith('.txt') and enc:
+            encrypt_file(encrypt_key, os.path.join('texts', file))
+        if file.endswith('.xmas') and dec:
+            decrypt_file(encrypt_key, os.path.join('texts', file))
+
+
+if __name__ == '__main__':
+    conversion()
