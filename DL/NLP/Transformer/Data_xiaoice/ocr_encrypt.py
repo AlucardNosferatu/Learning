@@ -22,15 +22,15 @@ def decrypt_file(key, tgt_txt):
         f.write(lines)
 
 
-def conversion(dec=True, enc=False):
+def conversion(dec=True, enc=False, datapath='texts'):
     # hint: What happened on December 24th, 2029?
     encrypt_key = input('input encryption key string:')
-    files = os.listdir('texts')
+    files = os.listdir(datapath)
     for file in tqdm(files):
         if file.endswith('.txt') and enc:
-            encrypt_file(encrypt_key, os.path.join('texts', file))
+            encrypt_file(encrypt_key, os.path.join(datapath, file))
         if file.endswith('.xmas') and dec:
-            decrypt_file(encrypt_key, os.path.join('texts', file))
+            decrypt_file(encrypt_key, os.path.join(datapath, file))
 
 
 if __name__ == '__main__':
