@@ -55,7 +55,7 @@ def fill_to_specified_size(seqs, spec_size):
     return seqs
 
 
-if __name__ == '__main__':
+def main():
     # questions, answers = load_conversations_from_json('Data/dataset.json')
     # questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
     # questions += questions2
@@ -71,12 +71,10 @@ if __name__ == '__main__':
             q, a = load_conversation_list_cn(os.path.join(text_dir, file))
             questions += q
             answers += a
-
     # q_test = questions
     # a_test = answers
     q_test = fill_to_specified_size(questions, SET_TCOUNT)
     a_test = fill_to_specified_size(answers, SET_TCOUNT)
-
     dataset, vocab_size = do_tokenize(q_test, a_test, task_conv_chn, new_tokenizer)
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
@@ -95,5 +93,8 @@ if __name__ == '__main__':
     cb_list = [ckpt, log_metric]
     if increment:
         mdl.load_weights(WGT_PATH)
-    with tf.device('/gpu:0'):
-        mdl.fit(dataset, epochs=EPOCHS, callbacks=cb_list)
+    mdl.fit(dataset, epochs=EPOCHS, callbacks=cb_list)
+
+
+if __name__ == '__main__':
+    main()
