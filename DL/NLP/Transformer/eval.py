@@ -3,16 +3,19 @@ import tensorflow as tf
 from Model.Transformer import transformer
 from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, MAX_SENTENCE_LENGTH, WGT_PATH
 from data import preprocess_sentence
-from tokenizer import task_conv_eng, padding
+from tokenizer import task_conv_eng, padding, task_conv_chn
 
 
 def evaluate(sentence, trained_model, start_token, end_token, tokenizer):
     sentence = preprocess_sentence(sentence)
-    sentence = padding(tokenizer, [start_token + tokenizer.encode(sentence) + end_token])
+    if type(tokenizer) is list:
+        index2word, word2index, freq_dist = tokenizer[0], tokenizer[1], tokenizer[2]
+        sentence = padding(tokenizer, [start_token + [word2index[word] for word in sentence] + end_token])
+    else:
+        sentence = padding(tokenizer, [start_token + tokenizer.encode(sentence) + end_token])
     output = tf.expand_dims(start_token, 0)
     for i in range(MAX_SENTENCE_LENGTH):
         predictions = trained_model(inputs=[sentence, output], training=False)
-
         predictions = predictions[:, -1:, :]
         predicted_id = tf.cast(tf.argmax(predictions, axis=-1), tf.int32)
 
@@ -26,10 +29,13 @@ def evaluate(sentence, trained_model, start_token, end_token, tokenizer):
 
 def predict(sentence, trained_model, start_token, end_token, tokenizer):
     prediction = evaluate(sentence, trained_model, start_token, end_token, tokenizer)
-
-    predicted_sentence = tokenizer.decode(
-        [i for i in prediction if i < tokenizer.vocab_size]
-    )
+    if type(tokenizer) is list:
+        index2word, word2index, freq_dist = tokenizer[0], tokenizer[1], tokenizer[2]
+        predicted_sentence = [index2word[index] for index in prediction]
+    else:
+        predicted_sentence = tokenizer.decode(
+            [i for i in prediction if i < tokenizer.vocab_size]
+        )
 
     # print('Input: {}'.format(sentence))
     # print('Output: {}'.format(predicted_sentence))
@@ -38,7 +44,7 @@ def predict(sentence, trained_model, start_token, end_token, tokenizer):
 
 
 def main():
-    tok, START_TOK, END_TOK, VOCAB_SIZE = task_conv_eng(None, None, False, False)
+    tok, START_TOK, END_TOK, VOCAB_SIZE = task_conv_chn(None, None, False, False)
     model = transformer(
         vocab_size=VOCAB_SIZE,
         num_layers=N_LAYERS,
