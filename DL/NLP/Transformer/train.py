@@ -13,7 +13,7 @@ from tokenizer import do_tokenize, task_conv_eng, task_conv_chn
 
 tf.keras.backend.clear_session()
 new_tokenizer = False
-increment = False
+increment = True
 increment = increment and not new_tokenizer
 
 
