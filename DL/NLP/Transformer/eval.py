@@ -1,37 +1,39 @@
+import jieba
 import tensorflow as tf
 
 from Model.Transformer import transformer
 from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, MAX_SENTENCE_LENGTH, WGT_PATH
 from data import preprocess_sentence
+# noinspection PyUnresolvedReferences
 from tokenizer import task_conv_eng, padding, task_conv_chn
 
 
-def evaluate(sentence, trained_model, start_token, end_token, tokenizer):
-    sentence = preprocess_sentence(sentence)
-    if type(tokenizer) is list:
-        index2word, word2index, freq_dist = tokenizer[0], tokenizer[1], tokenizer[2]
-        sentence = padding(tokenizer, [[start_token] + [word2index[word] for word in sentence] + [end_token]])
+def evaluate(sent, trained_model, start_token, end_token, tok):
+    if type(tok) is list:
+        # todo: add preprocess for CN question
+        sent = jieba.lcut(sent)
+        sent = padding(
+            tok,
+            [[start_token] + [tok[1][word] for word in sent if word in list(tok[1].keys())] + [end_token]]
+        )
     else:
-        sentence = padding(tokenizer, [start_token + tokenizer.encode(sentence) + end_token])
+        sent = preprocess_sentence(sent)
+        sent = padding(tok, [start_token + tok.encode(sent) + end_token])
     output = tf.expand_dims(start_token, 0)
     for i in range(MAX_SENTENCE_LENGTH):
-        predictions = trained_model(inputs=[sentence, output], training=False)
+        predictions = trained_model(inputs=[sent, output], training=False)
         predictions = predictions[:, -1:, :]
         predicted_id = tf.cast(tf.argmax(predictions, axis=-1), tf.int32)
-
         if tf.equal(predicted_id, end_token[0]):
             break
-
         output = tf.concat([output, predicted_id], axis=-1)
-
     return tf.squeeze(output, axis=0)
 
 
 def predict(sentence, trained_model, start_token, end_token, tokenizer):
     prediction = evaluate(sentence, trained_model, start_token, end_token, tokenizer)
     if type(tokenizer) is list:
-        index2word, word2index, freq_dist = tokenizer[0], tokenizer[1], tokenizer[2]
-        predicted_sentence = [index2word[index] for index in prediction]
+        predicted_sentence = [tokenizer[0][index] for index in prediction]
     else:
         predicted_sentence = tokenizer.decode(
             [i for i in prediction if i < tokenizer.vocab_size]
@@ -44,9 +46,9 @@ def predict(sentence, trained_model, start_token, end_token, tokenizer):
 
 
 def main():
-    tok, START_TOK, END_TOK, VOCAB_SIZE = task_conv_chn(None, None, False, False)
+    tok, start_tok, end_tok, vocab_size = task_conv_chn(None, None, False, False)
     model = transformer(
-        vocab_size=VOCAB_SIZE,
+        vocab_size=vocab_size,
         num_layers=N_LAYERS,
         units=UNITS,
         d_model=D_MODEL,
@@ -57,7 +59,7 @@ def main():
     input_str = "老婆，我去上班了。"
     while input_str != '':
         print('输入：', input_str)
-        output_str = predict(input_str, model, START_TOK, END_TOK, tok)
+        output_str = predict(input_str, model, start_tok, end_tok, tok)
         print('输出：', output_str)
         input_str = input()
 
