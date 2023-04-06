@@ -10,7 +10,7 @@ def evaluate(sentence, trained_model, start_token, end_token, tokenizer):
     sentence = preprocess_sentence(sentence)
     if type(tokenizer) is list:
         index2word, word2index, freq_dist = tokenizer[0], tokenizer[1], tokenizer[2]
-        sentence = padding(tokenizer, [start_token + [word2index[word] for word in sentence] + end_token])
+        sentence = padding(tokenizer, [[start_token] + [word2index[word] for word in sentence] + [end_token]])
     else:
         sentence = padding(tokenizer, [start_token + tokenizer.encode(sentence) + end_token])
     output = tf.expand_dims(start_token, 0)
