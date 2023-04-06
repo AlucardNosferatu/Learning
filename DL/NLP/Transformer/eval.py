@@ -37,7 +37,7 @@ def predict(sentence, trained_model, start_token, end_token, tokenizer):
     return predicted_sentence
 
 
-if __name__ == '__main__':
+def main():
     tok, START_TOK, END_TOK, VOCAB_SIZE = task_conv_eng(None, None, False, False)
     model = transformer(
         vocab_size=VOCAB_SIZE,
@@ -48,10 +48,13 @@ if __name__ == '__main__':
         dropout=DROP)
     print('模型初始化完成')
     model.load_weights(WGT_PATH)
-
     input_str = "Why are no-smoking areas not enforced?"
     while input_str != '':
         print('输入：', input_str)
         output_str = predict(input_str, model, START_TOK, END_TOK, tok)
         print('输出：', output_str)
         input_str = input()
+
+
+if __name__ == '__main__':
+    main()
