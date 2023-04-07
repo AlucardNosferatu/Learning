@@ -7,7 +7,7 @@ from Model.Transformer import transformer
 from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT
 # noinspection PyUnresolvedReferences
 from data import load_translation_from_lf, load_translation_from_code, load_conversation_list_cn
-from metric import loss_function, accuracy, perplexity, LossHistory
+from metric import loss_function, accuracy, perplexity
 # noinspection PyUnresolvedReferences
 from tokenizer import do_tokenize, task_conv_eng, task_conv_chn
 
@@ -88,7 +88,7 @@ def main(new_tokenizer=False, increment=False):
         mode='min',
         save_freq='epoch'
     )
-    log_metric = LossHistory()
+    # log_metric = LossHistory()
     # cb_list = [ckpt, log_metric]
     cb_list = [ckpt]
     if increment:
