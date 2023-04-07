@@ -56,8 +56,9 @@ def predict(sentence, trained_model, start_token, end_token, tok):
     return predicted_sentence
 
 
-def main():
-    tok, start_tok, end_tok, vocab_size = task_conv_chn(None, None, False, False)
+def main(task_func=task_conv_chn):
+    tok, vocab_size = task_func(None, None, False, False)
+    start_tok, end_tok = [vocab_size], [vocab_size + 1]
     model = transformer(
         vocab_size=vocab_size,
         num_layers=N_LAYERS,
