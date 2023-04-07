@@ -8,7 +8,7 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 from tqdm import tqdm
 
-from config import MAX_SENTENCE_LENGTH, SET_BS, TGT_VOC_SIZE, DATA_BUFFER_SIZE, TOK_PATH
+from config import MAX_SL, SET_BS, TGT_VOC_SIZE, DATA_BUFFER_SIZE, TOK_PATH, MIN_SL
 # noinspection PyUnresolvedReferences
 from data import load_translation_from_code, load_conversation_list_cn
 
@@ -35,10 +35,7 @@ def task_conv_eng(inputs, outputs, new_tokenizer=False, print_sample=True):
     else:
         tokenizer = tfds.deprecated.text.SubwordTextEncoder.load_from_file(TOK_PATH)
         print('词向量生成器已读取')
-    start_token, end_token = [tokenizer.vocab_size], [tokenizer.vocab_size + 1]
-
-    vocab_size_with_start_and_end = tokenizer.vocab_size + 2
-    return tokenizer, start_token, end_token, vocab_size_with_start_and_end
+    return tokenizer, tokenizer.vocab_size
 
 
 def task_conv_chn(inputs, outputs, new_tokenizer=False, print_sample=True):
@@ -73,41 +70,49 @@ def task_conv_chn(inputs, outputs, new_tokenizer=False, print_sample=True):
         with open(TOK_PATH + '_fdist.pkl', 'rb') as f:
             freq_dist = pickle.load(f)
         print('词向量生成器已读取')
-    start_token, end_token = word2index['<STA>'], word2index['<END>']
-
-    vocab_size_with_start_and_end = len(index2word)
-    return [index2word, word2index, freq_dist], start_token, end_token, vocab_size_with_start_and_end
+    vocab_size = len(index2word)
+    return [index2word, word2index, freq_dist], vocab_size
 
 
 def padding(tokenizer, tokenized_seq):
-    if type(tokenizer) is not list:
-        # pad tokenized sentences
-        tokenized_seq = tf.keras.preprocessing.sequence.pad_sequences(
-            tokenized_seq, maxlen=MAX_SENTENCE_LENGTH, padding='post')
-    else:
+    # pad tokenized sentences
+    if type(tokenizer) is list:
+        for i in range(len(tokenized_seq)):
+            while len(tokenized_seq[i]) < MAX_SL:
+                tokenized_seq[i].append(len(tokenizer[0]) + 2)
+                # pad_tok = v_size + 2
         tokenized_seq = np.array(tokenized_seq)
+    else:
+        tokenized_seq = tf.keras.preprocessing.sequence.pad_sequences(
+            tokenized_seq,
+            maxlen=MAX_SL,
+            padding='post'
+        )
     return tokenized_seq
 
 
-def tokenize_and_filter(inputs, outputs, task_func, new_tokenizer):
-    tokenizer, start_token, end_token, vocab_size_with_start_and_end = task_func(inputs, outputs, new_tokenizer)
+def tokenize_and_filter(questions, answers, task_func, new_tokenizer):
+    tokenizer, vocab_size = task_func(questions, answers, new_tokenizer)
+    start_token, end_token = [vocab_size], [vocab_size + 1]
     tokenized_inputs, tokenized_outputs = [], []
-    for (sentence1, sentence2) in tqdm(zip(inputs, outputs)):
+    for (que, ans) in tqdm(zip(questions, answers)):
         # tokenize sentence
         if type(tokenizer) is list:
             word2index = tokenizer[1]
-            sentence1 = [word2index[word] for word in sentence1]
-            sentence2 = [word2index[word] for word in sentence2]
+            que = [word2index[word] for word in que]
+            ans = [word2index[word] for word in ans]
         else:
-            sentence1 = start_token + tokenizer.encode(sentence1) + end_token
-            sentence2 = start_token + tokenizer.encode(sentence2) + end_token
+            que = tokenizer.encode(que)
+            ans = tokenizer.encode(ans)
+        que = start_token + que + end_token
+        ans = start_token + ans + end_token
         # check tokenized sentence max length
-        if len(sentence1) <= MAX_SENTENCE_LENGTH and len(sentence2) <= MAX_SENTENCE_LENGTH:
-            tokenized_inputs.append(sentence1)
-            tokenized_outputs.append(sentence2)
+        if MIN_SL < len(que) <= MAX_SL and MIN_SL < len(ans) <= MAX_SL:
+            tokenized_inputs.append(que)
+            tokenized_outputs.append(ans)
     tokenized_inputs = padding(tokenizer, tokenized_inputs)
     tokenized_outputs = padding(tokenizer, tokenized_outputs)
-    return tokenized_inputs, tokenized_outputs, vocab_size_with_start_and_end
+    return tokenized_inputs, tokenized_outputs, vocab_size
 
 
 def do_tokenize(que, ans, task_func, new_tokenizer):
@@ -138,16 +143,16 @@ if __name__ == '__main__':
     # questions, answers = load_translation_from_code()
     # questions, answers = load_conversation_list_cn('Data/conv_zh.txt')
 
-    questions, answers = [], []
+    q_test, a_test = [], []
     text_dir = 'Data_xiaoice/texts'
     files = os.listdir(text_dir)
     for file in tqdm(files):
         if file.endswith('_mat.txt'):
             q, a = load_conversation_list_cn(os.path.join(text_dir, file))
-            questions += q
-            answers += a
+            q_test += q
+            a_test += a
 
-    dataset, vocab_size = do_tokenize(questions, answers, task_conv_chn, new_tokenizer=True)
+    dataset, _ = do_tokenize(q_test, a_test, task_conv_chn, new_tokenizer=True)
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')

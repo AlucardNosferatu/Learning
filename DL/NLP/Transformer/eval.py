@@ -2,7 +2,7 @@ import jieba
 import tensorflow as tf
 
 from Model.Transformer import transformer
-from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, MAX_SENTENCE_LENGTH, WGT_PATH
+from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, MAX_SL, WGT_PATH
 from data import preprocess_sentence
 # noinspection PyUnresolvedReferences
 from tokenizer import task_conv_eng, padding, task_conv_chn
@@ -11,21 +11,21 @@ from tokenizer import task_conv_eng, padding, task_conv_chn
 def evaluate(sent, trained_model, start_token, end_token, tok):
     if type(tok) is list:
         # todo: add preprocess for CN question
-        start_token = [start_token]
-        end_token = [end_token]
+        # start_token = [start_token]
+        # end_token = [end_token]
         sent = jieba.lcut(sent)
         sent = [tok[1][word] for word in sent if word in list(tok[1].keys())]
-        while len(sent) > MAX_SENTENCE_LENGTH - 2:
+        while len(sent) > MAX_SL - 2:
             sent.pop(-1)
         sent = [start_token + sent + end_token]
-        while len(sent[0]) < MAX_SENTENCE_LENGTH:
+        while len(sent[0]) < MAX_SL:
             sent[0].append(tok[1]['<PAD>'])
         sent = padding(tok, sent)
     else:
         sent = preprocess_sentence(sent)
         sent = padding(tok, [start_token + tok.encode(sent) + end_token])
     output = tf.expand_dims(start_token, 0)
-    for i in range(MAX_SENTENCE_LENGTH):
+    for i in range(MAX_SL):
         predictions = trained_model(inputs=[sent, output], training=False)
         predictions = predictions[:, -1:, :]
         predicted_id = tf.cast(tf.argmax(predictions, axis=-1), tf.int32)

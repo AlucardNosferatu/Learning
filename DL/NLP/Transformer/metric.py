@@ -4,11 +4,11 @@ import time
 import tensorflow as tf
 from matplotlib import pyplot as plt
 
-from config import MAX_SENTENCE_LENGTH
+from config import MAX_SL
 
 
 def loss_function(y_true, y_pred):
-    y_true = tf.reshape(y_true, shape=(-1, MAX_SENTENCE_LENGTH - 1))
+    y_true = tf.reshape(y_true, shape=(-1, MAX_SL - 1))
 
     loss = tf.keras.losses.SparseCategoricalCrossentropy(
         from_logits=True, reduction='none')(y_true, y_pred)
@@ -31,7 +31,7 @@ def perplexity(real, pred):
     Returns:
         A Tensorflow tensor with the perplexity.
     """
-    real = tf.reshape(real, shape=(-1, MAX_SENTENCE_LENGTH - 1))
+    real = tf.reshape(real, shape=(-1, MAX_SL - 1))
     loss = loss_function(real, pred)
 
     return tf.cast(tf.pow(math.e, loss), dtype=tf.keras.backend.floatx())
@@ -39,7 +39,7 @@ def perplexity(real, pred):
 
 def accuracy(y_true, y_pred):
     # ensure labels have shape (batch_size, MAX_SENTENCE_LENGTH - 1)
-    y_true = tf.reshape(y_true, shape=(-1, MAX_SENTENCE_LENGTH - 1))
+    y_true = tf.reshape(y_true, shape=(-1, MAX_SL - 1))
     return tf.keras.metrics.sparse_categorical_accuracy(y_true, y_pred)
 
 
