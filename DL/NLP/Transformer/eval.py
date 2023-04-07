@@ -11,19 +11,16 @@ from tokenizer import task_conv_eng, padding, task_conv_chn
 def evaluate(sent, trained_model, start_token, end_token, tok):
     if type(tok) is list:
         # todo: add preprocess for CN question
-        # start_token = [start_token]
-        # end_token = [end_token]
         sent = jieba.lcut(sent)
         sent = [tok[1][word] for word in sent if word in list(tok[1].keys())]
         while len(sent) > MAX_SL - 2:
             sent.pop(-1)
         sent = [start_token + sent + end_token]
-        while len(sent[0]) < MAX_SL:
-            sent[0].append(tok[1]['<PAD>'])
-        sent = padding(tok, sent)
+
     else:
         sent = preprocess_sentence(sent)
-        sent = padding(tok, [start_token + tok.encode(sent) + end_token])
+        sent = [start_token + tok.encode(sent) + end_token]
+    sent = padding(tok, sent)
     output = tf.expand_dims(start_token, 0)
     for i in range(MAX_SL):
         predictions = trained_model(inputs=[sent, output], training=False)
@@ -35,17 +32,21 @@ def evaluate(sent, trained_model, start_token, end_token, tok):
     return tf.squeeze(output, axis=0)
 
 
-def predict(sentence, trained_model, start_token, end_token, tokenizer):
-    prediction = evaluate(sentence, trained_model, start_token, end_token, tokenizer)
-    if type(tokenizer) is list:
+def predict(sentence, trained_model, start_token, end_token, tok):
+    prediction = evaluate(sentence, trained_model, start_token, end_token, tok)
+    if type(tok) is list:
+        vocab_size = len(tok[0])
         predicted_sentence = ''.join(
             [
-                tokenizer[0][index] for index in prediction if tokenizer[0][index] not in ['<STA>', '<END>', '<PAD>']
+                tok[0][i] for i in prediction if i < vocab_size
             ]
         )
     else:
-        predicted_sentence = tokenizer.decode(
-            [i for i in prediction if i < tokenizer.vocab_size]
+        vocab_size = tok.vocab_size
+        predicted_sentence = tok.decode(
+            [
+                i for i in prediction if i < vocab_size
+            ]
         )
 
     # print('Input: {}'.format(sentence))
