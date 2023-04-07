@@ -98,9 +98,8 @@ def tokenize_and_filter(questions, answers, task_func, new_tokenizer):
     for (que, ans) in tqdm(zip(questions, answers)):
         # tokenize sentence
         if type(tokenizer) is list:
-            word2index = tokenizer[1]
-            que = [word2index[word] for word in que]
-            ans = [word2index[word] for word in ans]
+            que = [tokenizer[1][word] for word in que]
+            ans = [tokenizer[1][word] for word in ans]
         else:
             que = tokenizer.encode(que)
             ans = tokenizer.encode(ans)

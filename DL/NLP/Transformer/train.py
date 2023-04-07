@@ -77,7 +77,8 @@ def main(new_tokenizer=False, increment=False):
     dataset = dataset.batch(SET_BS)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     print('数据集分批+配置预取完成')
-    mdl = prepare_model(vocab_size)
+    mdl = prepare_model(vocab_size+2)
+    # include <STA> & <END>
     ckpt = tf.keras.callbacks.ModelCheckpoint(
         WGT_PATH,
         monitor='loss',
@@ -88,11 +89,12 @@ def main(new_tokenizer=False, increment=False):
         save_freq='epoch'
     )
     log_metric = LossHistory()
-    cb_list = [ckpt, log_metric]
+    # cb_list = [ckpt, log_metric]
+    cb_list = [ckpt]
     if increment:
         mdl.load_weights(WGT_PATH)
     mdl.fit(dataset, epochs=EPOCHS, callbacks=cb_list)
 
 
 if __name__ == '__main__':
-    main()
+    main(new_tokenizer=True, increment=False)
