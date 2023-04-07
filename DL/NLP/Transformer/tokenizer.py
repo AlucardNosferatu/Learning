@@ -3,7 +3,6 @@ import os
 import pickle
 
 import nltk
-import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
 from tqdm import tqdm
@@ -70,28 +69,20 @@ def task_conv_chn(inputs, outputs, new_tokenizer=False, print_sample=True):
         with open(TOK_PATH + '_fdist.pkl', 'rb') as f:
             freq_dist = pickle.load(f)
         print('词向量生成器已读取')
-    vocab_size = len(index2word)+1
+    vocab_size = len(index2word) + 1
     # not include '<PAD>'
     # all words: train_index = real_index + 1
     # <PAD>: index = 0
     return [index2word, word2index, freq_dist], vocab_size
 
 
-def padding(tokenizer, tokenized_seq):
+def padding(tokenized_seq):
     # pad tokenized sentences
-    if type(tokenizer) is list:
-        for i in range(len(tokenized_seq)):
-            while len(tokenized_seq[i]) < MAX_SL:
-                tokenized_seq[i].append(0)
-                # pad_tok = 0
-                # train_index = real_index + 1
-        tokenized_seq = np.array(tokenized_seq)
-    else:
-        tokenized_seq = tf.keras.preprocessing.sequence.pad_sequences(
-            tokenized_seq,
-            maxlen=MAX_SL,
-            padding='post'
-        )
+    tokenized_seq = tf.keras.preprocessing.sequence.pad_sequences(
+        tokenized_seq,
+        maxlen=MAX_SL,
+        padding='post'
+    )
     return tokenized_seq
 
 
@@ -103,8 +94,8 @@ def tokenize_and_filter(questions, answers, task_func, new_tokenizer):
         # tokenize sentence
         if type(tokenizer) is list:
             # train_index = real_index + 1
-            que = [tokenizer[1][word]+1 for word in que]
-            ans = [tokenizer[1][word]+1 for word in ans]
+            que = [tokenizer[1][word] + 1 for word in que]
+            ans = [tokenizer[1][word] + 1 for word in ans]
         else:
             que = tokenizer.encode(que)
             ans = tokenizer.encode(ans)
@@ -114,8 +105,8 @@ def tokenize_and_filter(questions, answers, task_func, new_tokenizer):
         if MIN_SL < len(que) <= MAX_SL and MIN_SL < len(ans) <= MAX_SL:
             tokenized_inputs.append(que)
             tokenized_outputs.append(ans)
-    tokenized_inputs = padding(tokenizer, tokenized_inputs)
-    tokenized_outputs = padding(tokenizer, tokenized_outputs)
+    tokenized_inputs = padding(tokenized_inputs)
+    tokenized_outputs = padding(tokenized_outputs)
     return tokenized_inputs, tokenized_outputs, vocab_size
 
 

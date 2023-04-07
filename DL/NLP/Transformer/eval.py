@@ -12,15 +12,16 @@ def evaluate(sent, trained_model, start_token, end_token, tok):
     if type(tok) is list:
         # todo: add preprocess for CN question
         sent = jieba.lcut(sent)
-        sent = [tok[1][word] for word in sent if word in list(tok[1].keys())]
-        while len(sent) > MAX_SL - 2:
-            sent.pop(-1)
-        sent = [start_token + sent + end_token]
-
+        sent = [tok[1][word] + 1 for word in sent if word in list(tok[1].keys())]
     else:
         sent = preprocess_sentence(sent)
-        sent = [start_token + tok.encode(sent) + end_token]
-    sent = padding(tok, sent)
+        sent = tok.encode(sent)
+    assert type(sent) is list
+    sent: list
+    while len(sent) > MAX_SL - 2:
+        sent.pop(-1)
+    sent = [start_token + sent + end_token]
+    sent = padding(sent)
     output = tf.expand_dims(start_token, 0)
     for i in range(MAX_SL):
         predictions = trained_model(inputs=[sent, output], training=False)
@@ -35,10 +36,10 @@ def evaluate(sent, trained_model, start_token, end_token, tok):
 def predict(sentence, trained_model, start_token, end_token, tok):
     prediction = evaluate(sentence, trained_model, start_token, end_token, tok)
     if type(tok) is list:
-        vocab_size = len(tok[0])
+        vocab_size = len(tok[0]) + 1
         predicted_sentence = ''.join(
             [
-                tok[0][i] for i in prediction if i < vocab_size
+                tok[0][i - 1] for i in prediction if i < vocab_size
             ]
         )
     else:
