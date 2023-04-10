@@ -147,7 +147,7 @@ def text_cnn_model_1(x_train_padded_seqs, train_cate, inc=True):
         mdl.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     else:
         mdl = load_model('TextCNN6')
-    mdl.fit(x_train_padded_seqs, train_cate, batch_size=1024, epochs=50)
+    mdl.fit(x_train_padded_seqs, train_cate, batch_size=1024, epochs=1000)
     mdl.save("TextCNN6")
 
 
