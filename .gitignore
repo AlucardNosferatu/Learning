@@ -26,3 +26,4 @@ DL/NLP/GloVe/embeddings/
 DL/NLP/GloVe/logs/
 
 DL/NLP/TextClassifier/TextCNN6/
+DL/NLP/TextGenerator/logs/
