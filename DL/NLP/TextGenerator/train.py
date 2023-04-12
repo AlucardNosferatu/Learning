@@ -1,13 +1,13 @@
 import tensorflow as tf
 
-from config import latent_dim, increment, weight_path
+from config import noise_dim, increment, weight_path
 from data import spawn_data
 from model.CGAN import ConditionalGAN
 from model.discriminator import spawn_d
 from model.generator import spawn_g
 
 cond_gan = ConditionalGAN(
-    discriminator=spawn_d(), generator=spawn_g(), latent_dim=latent_dim
+    discriminator=spawn_d(), generator=spawn_g(), latent_dim=noise_dim
 )
 cond_gan.compile(
     d_optimizer=tf.keras.optimizers.Adam(learning_rate=0.0003),
@@ -25,4 +25,4 @@ ckpt = tf.keras.callbacks.ModelCheckpoint(
 )
 if increment:
     cond_gan.load_weights(weight_path)
-    cond_gan.fit(spawn_data(), epochs=100, callbacks=[ckpt])
+cond_gan.fit(spawn_data(), epochs=100, callbacks=[ckpt])

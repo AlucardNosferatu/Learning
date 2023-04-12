@@ -1,7 +1,17 @@
+import os
+
+import jieba
 import numpy as np
 import tensorflow as tf
+from gensim.models import word2vec
 
-from config import batch_size, image_size
+from config import batch_size, image_size, w2v_path, npy_path
+
+# 设置词语上下文窗口大小
+w2v_context_size = 5
+w2v_min_word_count = 3
+new_w2v = True
+set_max_length = 32
 
 
 def spawn_data():
@@ -21,5 +31,61 @@ def spawn_data():
     return dataset
 
 
+def spawn_data_seq():
+    x_train = np.load(npy_path).tolist()
+    print('Done')
+
+
+def seq2array():
+    def getv(w2v, w):
+        return w2v.wv.get_vector(w, True)
+
+    dir_path = '../Transformer/Data_xiaoice/texts'
+    files = os.listdir(dir_path)
+    all_lines = []
+    for file in files:
+        if file.endswith('_mat.txt'):
+            with open(os.path.join(dir_path, file), 'r', encoding='utf-8') as f:
+                all_lines += f.readlines()
+    all_lines = [line.split('\t')[1].strip('\n') for line in all_lines]
+    all_lines = [jieba.lcut(line) for line in all_lines]
+    max_length = 0
+    for line in all_lines:
+        if len(line) > max_length:
+            max_length = len(line)
+    max_length = max(max_length, set_max_length)
+    for i in range(len(all_lines)):
+        last = True
+        while len(all_lines[i]) < max_length:
+            if last:
+                all_lines[i].append('<PAD>')
+                last = False
+            else:
+                all_lines[i].insert(0, '<PAD>')
+                last = True
+    if new_w2v:
+        w2v_mdl = word2vec.Word2Vec(
+            all_lines,
+            workers=4,
+            min_count=w2v_min_word_count,
+            window=w2v_context_size,
+            vector_size=max_length
+        )
+        w2v_mdl.init_sims(replace=True)
+        # 输入一个路径，保存训练好的模型，其中./data/model目录事先要存在
+        w2v_mdl.save(w2v_path)
+    else:
+        w2v_mdl = word2vec.Word2Vec.load(w2v_path)
+
+    all_lines = np.array(
+        [
+            [
+                getv(w2v_mdl, word) if w2v_mdl.wv.has_index_for(word) else getv(w2v_mdl, '<PAD>') for word in line
+            ] for line in all_lines
+        ]
+    )
+    np.save(npy_path, all_lines)
+
+
 if __name__ == '__main__':
-    d = spawn_data()
+    spawn_data_seq()

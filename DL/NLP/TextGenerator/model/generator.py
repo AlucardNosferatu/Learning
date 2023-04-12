@@ -1,23 +1,28 @@
 # Create the generator.
 import tensorflow as tf
 
-from config import generator_in_channels
+from config import generator_in_channels, image_size
+
+k_size = 7
+stride1 = 2
 
 
 def spawn_g():
+    assert image_size % (k_size * stride1) == 0
+    stride2 = int(image_size / (k_size * stride1))
     generator = tf.keras.Sequential(
         [
             tf.keras.layers.InputLayer((generator_in_channels,)),
             # We want to generate 128 + num_classes coefficients to reshape into a
             # 7x7x(128 + num_classes) map.
-            tf.keras.layers.Dense(7 * 7 * generator_in_channels),
+            tf.keras.layers.Dense(k_size * k_size * generator_in_channels),
             tf.keras.layers.LeakyReLU(alpha=0.2),
-            tf.keras.layers.Reshape((7, 7, generator_in_channels)),
-            tf.keras.layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding="same"),
+            tf.keras.layers.Reshape((k_size, k_size, generator_in_channels)),
+            tf.keras.layers.Conv2DTranspose(64, (4, 4), strides=(stride1, stride1), padding="same"),
             tf.keras.layers.LeakyReLU(alpha=0.2),
-            tf.keras.layers.Conv2DTranspose(128, (4, 4), strides=(2, 2), padding="same"),
+            tf.keras.layers.Conv2DTranspose(64, (4, 4), strides=(stride2, stride2), padding="same"),
             tf.keras.layers.LeakyReLU(alpha=0.2),
-            tf.keras.layers.Conv2D(1, (7, 7), padding="same", activation="sigmoid"),
+            tf.keras.layers.Conv2D(1, (k_size, k_size), padding="same", activation="sigmoid")
         ],
         name="generator",
     )

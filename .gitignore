@@ -30,3 +30,4 @@ DL/NLP/TextGenerator/logs/
 DL/NLP/TextGenerator/checkpoint/
 DL/NLP/TextGenerator/results/
 DL/NLP/TextGenerator/save/
+DL/NLP/TextGenerator/Data_xiaoice/*.txt
