@@ -29,3 +29,4 @@ DL/NLP/TextClassifier/TextCNN6/
 DL/NLP/TextGenerator/logs/
 DL/NLP/TextGenerator/checkpoint/
 DL/NLP/TextGenerator/results/
+DL/NLP/TextGenerator/save/

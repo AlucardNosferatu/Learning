@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from config import batch_size
+from config import batch_size, image_size
 
 
 def spawn_data():
@@ -13,9 +13,13 @@ def spawn_data():
     # Scale the pixel values to [0, 1] range, add a channel dimension to
     # the images, and one-hot encode the labels.
     all_digits = all_digits.astype("float32") / 255.0
-    all_digits = np.reshape(all_digits, (-1, 28, 28, 1))
+    all_digits = np.reshape(all_digits, (-1, image_size, image_size, 1))
     all_labels = tf.keras.utils.to_categorical(all_labels, 10)
     # Create tf.data.Dataset.
     dataset = tf.data.Dataset.from_tensor_slices((all_digits, all_labels))
     dataset = dataset.shuffle(buffer_size=1024).batch(batch_size)
     return dataset
+
+
+if __name__ == '__main__':
+    d = spawn_data()
