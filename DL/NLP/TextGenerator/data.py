@@ -9,7 +9,7 @@ from config import batch_size, image_size, w2v_path, npy_path
 
 # 设置词语上下文窗口大小
 w2v_context_size = 5
-w2v_min_word_count = 3
+w2v_min_word_count = 1
 new_w2v = True
 set_max_length = 32
 
@@ -32,8 +32,15 @@ def spawn_data():
 
 
 def spawn_data_seq():
-    x_train = np.load(npy_path).tolist()
-    print('Done')
+    all_digits = np.load(npy_path)
+    all_labels = None
+    # todo
+    all_digits = all_digits.astype("float32") / np.max(all_digits)
+    dim = all_digits.shape[1]
+    all_digits = np.reshape(all_digits, (-1, dim, dim, 1))
+    dataset = tf.data.Dataset.from_tensor_slices((all_digits, all_labels))
+    dataset = dataset.shuffle(buffer_size=1024).batch(batch_size)
+    return dataset
 
 
 def seq2array():
@@ -70,6 +77,7 @@ def seq2array():
             min_count=w2v_min_word_count,
             window=w2v_context_size,
             vector_size=max_length
+            # this is for generate square array
         )
         w2v_mdl.init_sims(replace=True)
         # 输入一个路径，保存训练好的模型，其中./data/model目录事先要存在
@@ -88,4 +96,5 @@ def seq2array():
 
 
 if __name__ == '__main__':
+    seq2array()
     spawn_data_seq()
