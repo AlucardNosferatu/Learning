@@ -2,8 +2,6 @@ import tensorflow as tf
 
 from config import image_size, num_classes
 
-train_dis = True
-
 
 class ConditionalGAN(tf.keras.Model):
     def call(self, inputs, training=None, mask=None):
@@ -19,6 +17,7 @@ class ConditionalGAN(tf.keras.Model):
         self.latent_dim = latent_dim
         self.gen_loss_tracker = tf.keras.metrics.Mean(name="generator_loss")
         self.disc_loss_tracker = tf.keras.metrics.Mean(name="discriminator_loss")
+        self.train_dis = True
 
     @property
     def metrics(self):
@@ -45,7 +44,7 @@ class ConditionalGAN(tf.keras.Model):
         image_one_hot_labels = tf.reshape(
             image_one_hot_labels, (-1, image_size, image_size, num_classes)
         )
-        if train_dis:
+        if self.train_dis:
             # Sample random points in the latent space and concatenate the labels.
             # This is for the generator.
             random_latent_vectors = tf.random.normal(shape=(batch_size, self.latent_dim))
@@ -99,7 +98,7 @@ class ConditionalGAN(tf.keras.Model):
 
         # Monitor loss.
         self.gen_loss_tracker.update_state(g_loss)
-        if train_dis:
+        if self.train_dis:
             self.disc_loss_tracker.update_state(d_loss)
         return {
             "g_loss": self.gen_loss_tracker.result(),
