@@ -9,3 +9,6 @@ increment = False
 weight_path = 'save/cgan'
 w2v_path = 'save/w2v'
 npy_path = 'save/s2a.npy'
+forder_path = '../TextCluster/output/file_order.txt'
+# l2i_path = '../TextCluster/output/label2index.pkl'
+i2l_path = '../TextCluster/output/index2label.npy'

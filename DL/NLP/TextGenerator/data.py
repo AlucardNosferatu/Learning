@@ -5,7 +5,7 @@ import numpy as np
 import tensorflow as tf
 from gensim.models import word2vec
 
-from config import batch_size, image_size, w2v_path, npy_path
+from config import batch_size, image_size, w2v_path, npy_path, forder_path, i2l_path, num_classes
 
 # 设置词语上下文窗口大小
 w2v_context_size = 5
@@ -24,7 +24,7 @@ def spawn_data():
     # the images, and one-hot encode the labels.
     all_digits = all_digits.astype("float32") / 255.0
     all_digits = np.reshape(all_digits, (-1, image_size, image_size, 1))
-    all_labels = tf.keras.utils.to_categorical(all_labels, 10)
+    all_labels = tf.keras.utils.to_categorical(all_labels, num_classes)
     # Create tf.data.Dataset.
     dataset = tf.data.Dataset.from_tensor_slices((all_digits, all_labels))
     dataset = dataset.shuffle(buffer_size=1024).batch(batch_size)
@@ -33,11 +33,12 @@ def spawn_data():
 
 def spawn_data_seq():
     all_digits = np.load(npy_path)
-    all_labels = None
+    all_labels = np.load(i2l_path)
     # todo
     all_digits = all_digits.astype("float32") / np.max(all_digits)
     dim = all_digits.shape[1]
     all_digits = np.reshape(all_digits, (-1, dim, dim, 1))
+    all_labels = tf.keras.utils.to_categorical(all_labels, num_classes)
     dataset = tf.data.Dataset.from_tensor_slices((all_digits, all_labels))
     dataset = dataset.shuffle(buffer_size=1024).batch(batch_size)
     return dataset
@@ -47,11 +48,16 @@ def seq2array():
     def getv(w2v, w):
         return w2v.wv.get_vector(w, True)
 
-    dir_path = '../Transformer/Data_xiaoice/texts'
-    files = os.listdir(dir_path)
+    # dir_path = '../Transformer/Data_xiaoice/texts'
+    # files = os.listdir(dir_path)
+    with open(forder_path, 'r', encoding='utf-8') as f_order:
+        files = f_order.readlines()
+    files = [file.strip('\n').replace('../', '') for file in files]
+    dir_path = '..'
     all_lines = []
     for file in files:
-        if file.endswith('_mat.txt'):
+        # if file.endswith('_mat.txt'):
+        if True:
             with open(os.path.join(dir_path, file), 'r', encoding='utf-8') as f:
                 all_lines += f.readlines()
     all_lines = [line.split('\t')[1].strip('\n') for line in all_lines]
@@ -97,4 +103,5 @@ def seq2array():
 
 if __name__ == '__main__':
     seq2array()
+    spawn_data()
     spawn_data_seq()
