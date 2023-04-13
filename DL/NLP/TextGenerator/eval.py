@@ -13,4 +13,5 @@ random_vector_labels = get_noise_with_condition(list(range(num_classes)))
 cond_gan.load_weights(weight_path)
 generated_images = cond_gan.generator.predict(random_vector_labels)
 res, w2v = convert_array(generated_images)
-print(res)
+for line in res:
+    print(''.join([word[0][0] for word in line]))
