@@ -22,6 +22,8 @@ def spawn_g():
             tf.keras.layers.LeakyReLU(alpha=0.2),
             tf.keras.layers.Conv2DTranspose(64, (4, 4), strides=(stride2, stride2), padding="same"),
             tf.keras.layers.LeakyReLU(alpha=0.2),
+            tf.keras.layers.Conv2D(1, (8, 8), padding="same"),
+            tf.keras.layers.LeakyReLU(alpha=0.2),
             tf.keras.layers.Conv2D(1, (8, 8), padding="same", activation="sigmoid")
         ],
         name="generator",
