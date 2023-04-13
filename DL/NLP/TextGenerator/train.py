@@ -29,4 +29,4 @@ ckpt = tf.keras.callbacks.ModelCheckpoint(
 increment = True
 if increment:
     cond_gan.load_weights(weight_path)
-cond_gan.fit(spawn_data_seq(), epochs=1000, callbacks=[ckpt])
+cond_gan.fit(spawn_data_seq(), epochs=10 ** 7, callbacks=[ckpt])
