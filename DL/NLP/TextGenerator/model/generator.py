@@ -3,7 +3,7 @@ import tensorflow as tf
 
 from config import generator_in_channels, image_size
 
-k_size = 7
+k_size = 8
 stride1 = 2
 
 
