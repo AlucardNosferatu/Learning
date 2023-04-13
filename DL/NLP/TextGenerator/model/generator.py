@@ -18,11 +18,9 @@ def spawn_g():
             tf.keras.layers.Dense(k_size * k_size * generator_in_channels),
             tf.keras.layers.LeakyReLU(alpha=0.2),
             tf.keras.layers.Reshape((k_size, k_size, generator_in_channels)),
-            tf.keras.layers.Conv2DTranspose(64, (4, 4), strides=(stride1, stride1), padding="same"),
+            tf.keras.layers.Conv2DTranspose(128, (4, 4), strides=(stride1, stride1), padding="same"),
             tf.keras.layers.LeakyReLU(alpha=0.2),
-            tf.keras.layers.Conv2DTranspose(64, (4, 4), strides=(stride2, stride2), padding="same"),
-            tf.keras.layers.LeakyReLU(alpha=0.2),
-            tf.keras.layers.Conv2D(1, (8, 8), padding="same"),
+            tf.keras.layers.Conv2DTranspose(128, (4, 4), strides=(stride2, stride2), padding="same"),
             tf.keras.layers.LeakyReLU(alpha=0.2),
             tf.keras.layers.Conv2D(1, (8, 8), padding="same", activation="sigmoid")
         ],

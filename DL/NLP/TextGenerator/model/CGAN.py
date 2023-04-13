@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from config import image_size, num_classes
 
-train_dis = False
+train_dis = True
 
 
 class ConditionalGAN(tf.keras.Model):
