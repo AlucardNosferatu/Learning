@@ -2,6 +2,8 @@ import tensorflow as tf
 
 from config import image_size, num_classes
 
+train_dis = False
+
 
 class ConditionalGAN(tf.keras.Model):
     def call(self, inputs, training=None, mask=None):
@@ -32,6 +34,7 @@ class ConditionalGAN(tf.keras.Model):
     def train_step(self, data):
         # Unpack the data.
         real_images, one_hot_labels = data
+        batch_size = tf.shape(real_images)[0]
 
         # Add dummy dimensions to the labels so that they can be concatenated with
         # the images. This is for the discriminator.
@@ -42,39 +45,38 @@ class ConditionalGAN(tf.keras.Model):
         image_one_hot_labels = tf.reshape(
             image_one_hot_labels, (-1, image_size, image_size, num_classes)
         )
+        if train_dis:
+            # Sample random points in the latent space and concatenate the labels.
+            # This is for the generator.
+            random_latent_vectors = tf.random.normal(shape=(batch_size, self.latent_dim))
+            random_vector_labels = tf.concat(
+                [random_latent_vectors, one_hot_labels], axis=1
+            )
 
-        # Sample random points in the latent space and concatenate the labels.
-        # This is for the generator.
-        batch_size = tf.shape(real_images)[0]
-        random_latent_vectors = tf.random.normal(shape=(batch_size, self.latent_dim))
-        random_vector_labels = tf.concat(
-            [random_latent_vectors, one_hot_labels], axis=1
-        )
+            # Decode the noise (guided by labels) to fake images.
+            generated_images = self.generator(random_vector_labels)
 
-        # Decode the noise (guided by labels) to fake images.
-        generated_images = self.generator(random_vector_labels)
+            # Combine them with real images. Note that we are concatenating the labels
+            # with these images here.
+            fake_image_and_labels = tf.concat([generated_images, image_one_hot_labels], -1)
+            real_image_and_labels = tf.concat([real_images, image_one_hot_labels], -1)
+            combined_images = tf.concat(
+                [fake_image_and_labels, real_image_and_labels], axis=0
+            )
 
-        # Combine them with real images. Note that we are concatenating the labels
-        # with these images here.
-        fake_image_and_labels = tf.concat([generated_images, image_one_hot_labels], -1)
-        real_image_and_labels = tf.concat([real_images, image_one_hot_labels], -1)
-        combined_images = tf.concat(
-            [fake_image_and_labels, real_image_and_labels], axis=0
-        )
+            # Assemble labels discriminating real from fake images.
+            labels = tf.concat(
+                [tf.ones((batch_size, 1)), tf.zeros((batch_size, 1))], axis=0
+            )
 
-        # Assemble labels discriminating real from fake images.
-        labels = tf.concat(
-            [tf.ones((batch_size, 1)), tf.zeros((batch_size, 1))], axis=0
-        )
-
-        # Train the discriminator.
-        with tf.GradientTape() as tape:
-            predictions = self.discriminator(combined_images)
-            d_loss = self.loss_fn(labels, predictions)
-        grads = tape.gradient(d_loss, self.discriminator.trainable_weights)
-        self.d_optimizer.apply_gradients(
-            zip(grads, self.discriminator.trainable_weights)
-        )
+            # Train the discriminator.
+            with tf.GradientTape() as tape:
+                predictions = self.discriminator(combined_images)
+                d_loss = self.loss_fn(labels, predictions)
+            grads = tape.gradient(d_loss, self.discriminator.trainable_weights)
+            self.d_optimizer.apply_gradients(
+                zip(grads, self.discriminator.trainable_weights)
+            )
 
         # Sample random points in the latent space.
         random_latent_vectors = tf.random.normal(shape=(batch_size, self.latent_dim))
@@ -97,7 +99,8 @@ class ConditionalGAN(tf.keras.Model):
 
         # Monitor loss.
         self.gen_loss_tracker.update_state(g_loss)
-        self.disc_loss_tracker.update_state(d_loss)
+        if train_dis:
+            self.disc_loss_tracker.update_state(d_loss)
         return {
             "g_loss": self.gen_loss_tracker.result(),
             "d_loss": self.disc_loss_tracker.result(),

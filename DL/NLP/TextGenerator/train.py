@@ -16,14 +16,13 @@ cond_gan.compile(
 )
 ckpt = tf.keras.callbacks.ModelCheckpoint(
     weight_path,
-    monitor='g_loss',
-    verbose=1,
+    monitor='d_loss',
     save_best_only=True,
     save_weights_only=True,
     mode='min',
     save_freq='epoch'
 )
-increment = False
+increment = True
 if increment:
     cond_gan.load_weights(weight_path)
-cond_gan.fit(spawn_data_seq(), epochs=100, callbacks=[ckpt])
+cond_gan.fit(spawn_data_seq(), epochs=1000, callbacks=[ckpt])
