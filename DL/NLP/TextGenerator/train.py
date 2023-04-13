@@ -11,7 +11,7 @@ cond_gan = ConditionalGAN(
 )
 
 d = spawn_data_seq()
-increment = True
+increment = False
 if increment:
     cond_gan.load_weights(weight_path)
 for _ in range(100):
@@ -31,7 +31,7 @@ for _ in range(100):
     )
     cond_gan.compile(
         d_optimizer=tf.keras.optimizers.Adam(learning_rate=0.000003),
-        g_optimizer=tf.keras.optimizers.Adam(learning_rate=0.0003),
+        g_optimizer=tf.keras.optimizers.Adam(learning_rate=0.000003),
         loss_fn=tf.keras.losses.BinaryCrossentropy(from_logits=True),
     )
     cond_gan.fit(d, epochs=mini_epoch, callbacks=[ckpt])

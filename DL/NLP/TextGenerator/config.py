@@ -1,4 +1,4 @@
-batch_size = 128
+batch_size = 64
 num_channels = 1
 num_classes = 10
 image_size = 32
