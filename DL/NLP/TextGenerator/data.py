@@ -10,7 +10,6 @@ from config import batch_size, image_size, w2v_path, npy_path, forder_path, i2l_
 # 设置词语上下文窗口大小
 w2v_context_size = 5
 w2v_min_word_count = 1
-new_w2v = True
 set_max_length = 32
 
 
@@ -34,8 +33,8 @@ def spawn_data():
 def spawn_data_seq():
     all_digits = np.load(npy_path)
     all_labels = np.load(i2l_path)
-    # todo
-    all_digits = all_digits.astype("float32") / np.max(all_digits)
+    # 这里输入的句矩阵已经是归一化的，不需要再归一化了
+    # all_digits = all_digits.astype("float32") / np.max(all_digits)
     dim = all_digits.shape[1]
     all_digits = np.reshape(all_digits, (-1, dim, dim, 1))
     all_labels = tf.keras.utils.to_categorical(all_labels, num_classes)
@@ -44,7 +43,7 @@ def spawn_data_seq():
     return dataset
 
 
-def seq2array():
+def seq2array(new_w2v=False):
     def getv(w2v, w):
         return w2v.wv.get_vector(w, True)
 
@@ -102,6 +101,5 @@ def seq2array():
 
 
 if __name__ == '__main__':
-    seq2array()
-    spawn_data()
+    # seq2array(False)
     spawn_data_seq()

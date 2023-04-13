@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from config import noise_dim, increment, weight_path
-from data import spawn_data
+from config import noise_dim, weight_path
+from data import spawn_data_seq
 from model.CGAN import ConditionalGAN
 from model.discriminator import spawn_d
 from model.generator import spawn_g
@@ -23,6 +23,7 @@ ckpt = tf.keras.callbacks.ModelCheckpoint(
     mode='min',
     save_freq='epoch'
 )
+increment = False
 if increment:
     cond_gan.load_weights(weight_path)
-cond_gan.fit(spawn_data(), epochs=100, callbacks=[ckpt])
+cond_gan.fit(spawn_data_seq(), epochs=100, callbacks=[ckpt])
