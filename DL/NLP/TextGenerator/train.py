@@ -4,6 +4,7 @@ from config import noise_dim, weight_path
 from data import spawn_data_seq
 from model.CGAN import ConditionalGAN
 from model.discriminator import spawn_d
+# noinspection PyUnresolvedReferences
 from model.generator import spawn_g, spawn_g_conv1d
 
 if __name__ == '__main__':
@@ -13,7 +14,7 @@ if __name__ == '__main__':
         latent_dim=noise_dim
     )
     dataset = spawn_data_seq()
-    increment = False
+    increment = True
     if increment:
         cond_gan.load_weights(weight_path)
     cram_school = False
