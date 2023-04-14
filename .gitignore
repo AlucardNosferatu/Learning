@@ -25,9 +25,9 @@ DL/NLP/GloVe/data/
 DL/NLP/GloVe/embeddings/
 DL/NLP/GloVe/logs/
 
-DL/NLP/TextClassifier/TextCNN6/
-DL/NLP/TextGenerator/logs/
-DL/NLP/TextGenerator/checkpoint/
-DL/NLP/TextGenerator/results/
-DL/NLP/TextGenerator/save/
-DL/NLP/TextGenerator/Data_xiaoice/*.txt
+DL/NLP/Patchwork/TextClassifier/TextCNN6/
+DL/NLP/Patchwork/TextGenerator/logs/
+DL/NLP/Patchwork/TextGenerator/checkpoint/
+DL/NLP/Patchwork/TextGenerator/results/
+DL/NLP/Patchwork/TextGenerator/save/
+DL/NLP/Patchwork/TextGenerator/Data_xiaoice/*.txt
