@@ -52,7 +52,7 @@ def seq2array(new_w2v=False):
     with open(forder_path, 'r', encoding='utf-8') as f_order:
         files = f_order.readlines()
     files = [file.strip('\n').replace('../', '') for file in files]
-    dir_path = '..'
+    dir_path = '../..'
     all_lines = []
     for file in files:
         # if file.endswith('_mat.txt'):
@@ -101,5 +101,5 @@ def seq2array(new_w2v=False):
 
 
 if __name__ == '__main__':
-    # seq2array(False)
+    seq2array(False)
     spawn_data_seq()

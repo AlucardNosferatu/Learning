@@ -102,7 +102,7 @@ if __name__ == '__main__':
     # Kmeans = KmeansClustering(stopwords_path='../data/stop_words.txt')
     Kmeans = KmeansClustering()
     # res = Kmeans.kmeans('../data/test_data.txt', n_clusters=5)
-    c_dir = '../../Transformer/Data_xiaoice/texts'
+    c_dir = '../../../Transformer/Data_xiaoice/texts'
     c_path = os.listdir(c_dir)
     c_path = [os.path.join(c_dir, f_path) for f_path in c_path if f_path.endswith('_mat.txt')]
     l2i, i2l, c, w = Kmeans.kmeans(c_path, n_clusters=10)
