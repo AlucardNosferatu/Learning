@@ -1,3 +1,7 @@
+import os
+
+PATH_PREFIX = 'Transformer/Learning/Algorithm/DL/NLP/Transformer'
+
 N_LAYERS = 4
 WORD_VEC_DIM = 128
 N_HEADS = 2
@@ -18,6 +22,9 @@ TOK_PATH = 'Save/Chat_CN/tokenizer'
 # WGT_PATH = 'Save/Chat/bot_4'
 WGT_PATH = 'Save/Chat_CN/bot_4'
 # WGT_PATH = 'Save/Translate/bot_4'
+
+TOK_PATH = os.path.join(PATH_PREFIX, TOK_PATH)
+WGT_PATH = os.path.join(PATH_PREFIX, WGT_PATH)
 
 SET_TCOUNT = 512
 # TCOUNT = TRAIN_COUNT

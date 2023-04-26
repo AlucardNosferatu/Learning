@@ -9,6 +9,19 @@ from tokenizer import task_conv_eng, padding, task_conv_chn
 
 
 def evaluate(sent, trained_model, start_token, end_token, tok):
+    sent = sent2vec(end_token, sent, start_token, tok)
+    output = tf.expand_dims(start_token, 0)
+    for i in range(MAX_SL):
+        predictions = trained_model(inputs=[sent, output], training=False)
+        predictions = predictions[:, -1:, :]
+        predicted_id = tf.cast(tf.argmax(predictions, axis=-1), tf.int32)
+        if tf.equal(predicted_id, end_token[0]):
+            break
+        output = tf.concat([output, predicted_id], axis=-1)
+    return tf.squeeze(output, axis=0)
+
+
+def sent2vec(end_token, sent, start_token, tok):
     if type(tok) is list:
         # todo: add preprocess for CN question
         sent = jieba.lcut(sent)
@@ -22,15 +35,7 @@ def evaluate(sent, trained_model, start_token, end_token, tok):
         sent.pop(-1)
     sent = [start_token + sent + end_token]
     sent = padding(sent)
-    output = tf.expand_dims(start_token, 0)
-    for i in range(MAX_SL):
-        predictions = trained_model(inputs=[sent, output], training=False)
-        predictions = predictions[:, -1:, :]
-        predicted_id = tf.cast(tf.argmax(predictions, axis=-1), tf.int32)
-        if tf.equal(predicted_id, end_token[0]):
-            break
-        output = tf.concat([output, predicted_id], axis=-1)
-    return tf.squeeze(output, axis=0)
+    return sent
 
 
 def predict(sentence, trained_model, start_token, end_token, tok):
