@@ -2,7 +2,7 @@ import jieba
 import tensorflow as tf
 
 from Model.Transformer import transformer
-from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, MAX_SL, WGT_PATH
+from config import N_LAYERS, WORD_VEC_DIM, N_HEADS, UNITS, DROP, MAX_SL, WGT_PATH
 from data import preprocess_sentence
 # noinspection PyUnresolvedReferences
 from tokenizer import task_conv_eng, padding, task_conv_chn
@@ -63,9 +63,10 @@ def main(task_func=task_conv_chn):
         vocab_size=vocab_size + 2,
         num_layers=N_LAYERS,
         units=UNITS,
-        d_model=D_MODEL,
+        word_vec_dim=WORD_VEC_DIM,
         num_heads=N_HEADS,
-        dropout=DROP)
+        dropout=DROP
+    )
     print('模型初始化完成')
     model.load_weights(WGT_PATH)
     input_str = "老婆，我去上班了。"

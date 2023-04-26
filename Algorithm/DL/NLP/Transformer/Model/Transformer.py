@@ -4,13 +4,14 @@ import tensorflow as tf
 from Model.Decoder import decoder
 from Model.Encoder import encoder
 from Model.Masking import create_padding_mask, create_look_ahead_mask
+from config import MAX_SL, N_LAYERS, UNITS, WORD_VEC_DIM, N_HEADS, DROP, TGT_VOC_SIZE
 
 
 def transformer(
         vocab_size,
         num_layers,
         units,
-        d_model,
+        word_vec_dim,
         num_heads,
         dropout,
         name="transformer"
@@ -35,7 +36,7 @@ def transformer(
         vocab_size=vocab_size,
         num_layers=num_layers,
         units=units,
-        d_model=d_model,
+        word_vec_dim=word_vec_dim,
         num_heads=num_heads,
         dropout=dropout,
     )(inputs=[inputs, enc_padding_mask])
@@ -44,7 +45,7 @@ def transformer(
         vocab_size=vocab_size,
         num_layers=num_layers,
         units=units,
-        d_model=d_model,
+        d_model=word_vec_dim,
         num_heads=num_heads,
         dropout=dropout,
     )(inputs=[dec_inputs, enc_outputs, look_ahead_mask, dec_padding_mask])
@@ -55,19 +56,20 @@ def transformer(
 
 
 def transformer_encoder_only(
+        seq_length,
         vocab_size,
         num_layers,
         units,
-        d_model,
+        word_vec_dim,
         num_heads,
         dropout,
         name="transformer_encoder_only"
 ):
-    inputs = tf.keras.Input(shape=(None,), name="inputs")
+    inputs = tf.keras.Input(shape=(seq_length,), name="inputs")
     causal_attention_mask = tf.constant(
         np.triu(
             np.ones(
-                (1, 1, 77, 77),
+                (1, 1, seq_length, seq_length),
                 dtype="float32"
             ) * -np.inf,
             k=1
@@ -77,10 +79,23 @@ def transformer_encoder_only(
         vocab_size=vocab_size,
         num_layers=num_layers,
         units=units,
-        d_model=d_model,
+        word_vec_dim=word_vec_dim,
         num_heads=num_heads,
         dropout=dropout,
     )(inputs=[inputs, causal_attention_mask])
     output = tf.keras.layers.LayerNormalization(epsilon=1e-5)(enc_outputs)
     # 因为只用了编码器，自然不需要dec_inputs
     return tf.keras.Model(inputs=inputs, outputs=output, name=name)
+
+
+if __name__ == '__main__':
+    mdl = transformer_encoder_only(
+        seq_length=MAX_SL,
+        vocab_size=TGT_VOC_SIZE,
+        num_layers=N_LAYERS,
+        units=UNITS,
+        word_vec_dim=WORD_VEC_DIM,
+        num_heads=N_HEADS,
+        dropout=DROP
+    )
+    print('Done')

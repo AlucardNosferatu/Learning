@@ -4,7 +4,7 @@ import tensorflow as tf
 from tqdm import tqdm
 
 from Model.Transformer import transformer
-from config import N_LAYERS, D_MODEL, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT
+from config import N_LAYERS, WORD_VEC_DIM, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT
 # noinspection PyUnresolvedReferences
 from data import load_translation_from_lf, load_translation_from_code, load_conversation_list_cn
 from metric import loss_function, accuracy, perplexity
@@ -19,7 +19,7 @@ def prepare_model(v_size):
         vocab_size=v_size,
         num_layers=N_LAYERS,
         units=UNITS,
-        d_model=D_MODEL,
+        word_vec_dim=WORD_VEC_DIM,
         num_heads=N_HEADS,
         dropout=DROP)
     print('模型初始化完成')
