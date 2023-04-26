@@ -4,6 +4,7 @@ import tensorflow as tf
 def create_padding_mask(x):
     mask = tf.cast(tf.math.equal(x, 0), tf.float32)
     # (batch_size, 1, 1, sequence length)
+    # 因为<PAD>的token是0，这里最好把0换成随<PAD>的token变化的变量
     return mask[:, tf.newaxis, tf.newaxis, :]
 
 

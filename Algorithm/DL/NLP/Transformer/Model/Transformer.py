@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 
 from Model.Decoder import decoder
@@ -51,3 +52,35 @@ def transformer(
     outputs = tf.keras.layers.Dense(units=vocab_size, name="outputs")(dec_outputs)
 
     return tf.keras.Model(inputs=[inputs, dec_inputs], outputs=outputs, name=name)
+
+
+def transformer_encoder_only(
+        vocab_size,
+        num_layers,
+        units,
+        d_model,
+        num_heads,
+        dropout,
+        name="transformer_encoder_only"
+):
+    inputs = tf.keras.Input(shape=(None,), name="inputs")
+    causal_attention_mask = tf.constant(
+        np.triu(
+            np.ones(
+                (1, 1, 77, 77),
+                dtype="float32"
+            ) * -np.inf,
+            k=1
+        )
+    )
+    enc_outputs = encoder(
+        vocab_size=vocab_size,
+        num_layers=num_layers,
+        units=units,
+        d_model=d_model,
+        num_heads=num_heads,
+        dropout=dropout,
+    )(inputs=[inputs, causal_attention_mask])
+    output = tf.keras.layers.LayerNormalization(epsilon=1e-5)(enc_outputs)
+    # 因为只用了编码器，自然不需要dec_inputs
+    return tf.keras.Model(inputs=inputs, outputs=output, name=name)

@@ -6,9 +6,9 @@ def get_angles(position, i, d_model):
     return position * angles
 
 
-def positional_encoding(position, d_model):
+def positional_encoding(vocab_size, d_model):
     angle_rads = get_angles(
-        position=tf.range(position, dtype=tf.float32)[:, tf.newaxis],
+        position=tf.range(vocab_size, dtype=tf.float32)[:, tf.newaxis],
         i=tf.range(d_model, dtype=tf.float32)[tf.newaxis, :],
         d_model=d_model)
     # apply sin to even index in the array
@@ -23,9 +23,9 @@ def positional_encoding(position, d_model):
 
 class PositionalEncoding(tf.keras.layers.Layer):
 
-    def __init__(self, position, d_model):
+    def __init__(self, vocab_size, d_model):
         super(PositionalEncoding, self).__init__()
-        self.pos_encoding = positional_encoding(position, d_model)
+        self.pos_encoding = positional_encoding(vocab_size, d_model)
 
     def call(self, inputs, **kwargs):
         return inputs + self.pos_encoding[:, :tf.shape(inputs)[1], :]
