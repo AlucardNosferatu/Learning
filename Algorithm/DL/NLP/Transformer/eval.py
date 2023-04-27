@@ -21,10 +21,13 @@ def evaluate(sent, trained_model, start_token, end_token, tok):
     return tf.squeeze(output, axis=0)
 
 
-def sent2vec(end_token, sent, start_token, tok):
+def sent2vec(end_token, sent, start_token, tok, separator=None):
     if type(tok) is list:
         # todo: add preprocess for CN question
-        sent = jieba.lcut(sent)
+        if separator is not None:
+            sent = sent.split(separator)
+        else:
+            sent = jieba.lcut(sent)
         sent = [tok[1][word] + 1 for word in sent if word in list(tok[1].keys())]
     else:
         sent = preprocess_sentence(sent)

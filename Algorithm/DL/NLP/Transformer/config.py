@@ -17,11 +17,13 @@ TGT_VOC_SIZE = 1024 * 2
 DATA_BUFFER_SIZE = 10240
 
 # TOK_PATH = 'Save/Chat/tokenizer'
-TOK_PATH = 'Save/Chat_CN/tokenizer'
+# TOK_PATH = 'Save/Chat_CN/tokenizer'
 # TOK_PATH = 'Save/Translate/tokenizer'
+TOK_PATH = 'Save/StableDiffusion/tokenizer'
 # WGT_PATH = 'Save/Chat/bot_4'
-WGT_PATH = 'Save/Chat_CN/bot_4'
+# WGT_PATH = 'Save/Chat_CN/bot_4'
 # WGT_PATH = 'Save/Translate/bot_4'
+WGT_PATH = 'Save/StableDiffusion/bot_4'
 
 TOK_PATH = os.path.join(PATH_PREFIX, TOK_PATH)
 WGT_PATH = os.path.join(PATH_PREFIX, WGT_PATH)

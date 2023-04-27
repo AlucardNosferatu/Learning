@@ -45,7 +45,7 @@ def encoder(vocab_size,
     inputs = tf.keras.Input(shape=(None,), name="inputs")
     padding_mask = tf.keras.Input(shape=(1, None, None), name="padding_mask")
 
-    embeddings = tf.keras.layers.Embedding(vocab_size, word_vec_dim)(inputs)
+    embeddings = tf.keras.layers.Embedding(vocab_size, word_vec_dim, name='word_embed')(inputs)
     embeddings *= tf.math.sqrt(tf.cast(word_vec_dim, tf.float32))
     # CLIP模型这里没有使用正弦编码，而是用了另一个嵌入层（可训练）来编码位置信息
     # 我偷懒先不改这个，编码功能上没变化就行（不改还能少写一个从0到max_len的pos_id输入）
