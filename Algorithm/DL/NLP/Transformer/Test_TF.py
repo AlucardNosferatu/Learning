@@ -2,10 +2,10 @@ import jieba
 import tensorflow as tf
 
 from Model_TF.Transformer import transformer
-from config import N_LAYERS, WORD_VEC_DIM, N_HEADS, UNITS, DROP, MAX_SL, WGT_PATH
-from data import preprocess_sentence
+from Config_TF import N_LAYERS, WORD_VEC_DIM, N_HEADS, UNITS, DROP, MAX_SL, WGT_PATH
+from Load_TF import preprocess_sentence
 # noinspection PyUnresolvedReferences
-from tokenizer import task_conv_eng, padding, task_conv_chn
+from Tokenizer import task_conv_eng, padding, task_conv_chn
 
 
 def evaluate(sent, trained_model, start_token, end_token, tok):

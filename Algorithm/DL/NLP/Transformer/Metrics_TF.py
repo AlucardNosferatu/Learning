@@ -4,7 +4,7 @@ import time
 import tensorflow as tf
 from matplotlib import pyplot as plt
 
-from config import MAX_SL
+from Config_TF import MAX_SL
 
 
 def loss_function(y_true, y_pred):

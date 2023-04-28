@@ -4,12 +4,12 @@ import tensorflow as tf
 from tqdm import tqdm
 
 from Model_TF.Transformer import transformer
-from config import N_LAYERS, WORD_VEC_DIM, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT
+from Config_TF import N_LAYERS, WORD_VEC_DIM, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT
 # noinspection PyUnresolvedReferences
-from data import load_translation_from_lf, load_translation_from_code, load_conversation_list_cn
-from metric import loss_function, accuracy, perplexity
+from Load_TF import load_translation_from_lf, load_translation_from_code, load_conversation_list_cn
+from Metrics_TF import loss_function, accuracy, perplexity
 # noinspection PyUnresolvedReferences
-from tokenizer import do_tokenize, task_conv_eng, task_conv_chn
+from Tokenizer import do_tokenize, task_conv_eng, task_conv_chn
 
 tf.keras.backend.clear_session()
 

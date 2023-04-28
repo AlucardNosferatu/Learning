@@ -7,9 +7,9 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 from tqdm import tqdm
 
-from config import MAX_SL, SET_BS, TGT_VOC_SIZE, DATA_BUFFER_SIZE, TOK_PATH, MIN_SL
+from Config_TF import MAX_SL, SET_BS, TGT_VOC_SIZE, DATA_BUFFER_SIZE, TOK_PATH, MIN_SL
 # noinspection PyUnresolvedReferences
-from data import load_translation_from_code, load_conversation_list_cn
+from Load_TF import load_translation_from_code, load_conversation_list_cn
 
 
 def task_conv_eng(inputs, outputs, new_tokenizer=False, print_sample=True):
