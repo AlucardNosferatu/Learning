@@ -1,7 +1,7 @@
 import jieba
 import tensorflow as tf
 
-from Model.Transformer import transformer
+from Model_TF.Transformer import transformer
 from config import N_LAYERS, WORD_VEC_DIM, N_HEADS, UNITS, DROP, MAX_SL, WGT_PATH
 from data import preprocess_sentence
 # noinspection PyUnresolvedReferences

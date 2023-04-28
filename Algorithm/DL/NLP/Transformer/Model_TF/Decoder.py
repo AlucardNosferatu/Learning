@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from Model.Attention import MultiHeadAttention
-from Model.Position import PositionalEncoding
+from Model_TF.Attention import MultiHeadAttention
+from Model_TF.Position import PositionalEncoding
 
 
 def decoder_layer(units, word_vec_dim, num_heads, dropout, name="decoder_layer"):

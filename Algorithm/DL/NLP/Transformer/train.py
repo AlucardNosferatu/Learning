@@ -3,7 +3,7 @@ import os
 import tensorflow as tf
 from tqdm import tqdm
 
-from Model.Transformer import transformer
+from Model_TF.Transformer import transformer
 from config import N_LAYERS, WORD_VEC_DIM, N_HEADS, UNITS, DROP, SET_BS, EPOCHS, WGT_PATH, SET_TCOUNT
 # noinspection PyUnresolvedReferences
 from data import load_translation_from_lf, load_translation_from_code, load_conversation_list_cn
@@ -54,15 +54,15 @@ def fill_to_specified_size(seqs, spec_size):
 
 def main(new_tokenizer=False, increment=False):
     increment = increment and not new_tokenizer
-    # questions, answers = load_conversations_from_json('Data/dataset.json')
-    # questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
+    # questions, answers = load_conversations_from_json('Data_TF/dataset.json')
+    # questions2, answers2 = load_conversations_from_csv('Data_TF/20200325_counsel_chat.csv')
     # questions += questions2
     # answers += answers2
-    # questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
+    # questions, answers = load_translation_from_lf('Data_TF/europarl-v7.es-en.en', 'Data_TF/europarl-v7.es-en.es')
     # questions2, answers2 = load_translation_from_code()
     # print('原始数据已导入')
     questions, answers = [], []
-    text_dir = 'Data_xiaoice/texts'
+    text_dir = 'Data_TF_xiaoice/texts'
     files = os.listdir(text_dir)
     for file in tqdm(files):
         if file.endswith('_mat.txt'):

@@ -147,13 +147,13 @@ def load_translation_from_code():
 
 if __name__ == '__main__':
     questions, answers = [], []
-    text_dir = 'Data_xiaoice/texts'
+    text_dir = 'Data_TF_xiaoice/texts'
     files = os.listdir(text_dir)
     for file in files:
         if file.endswith('_mat.txt'):
             q, a = load_conversation_list_cn(os.path.join(text_dir, file))
             questions += q
             answers += a
-    # questions, answers = load_conversations_from_json('Data/dataset.json')
-    # questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
+    # questions, answers = load_conversations_from_json('Data_TF/dataset.json')
+    # questions2, answers2 = load_conversations_from_csv('Data_TF/20200325_counsel_chat.csv')
     print('对话数据读取完成')

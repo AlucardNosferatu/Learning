@@ -2,7 +2,7 @@ import tensorflow as tf
 
 
 def scaled_dot_product_attention(query, key, value, mask):
-    """Calculate the attention weights. """
+    """Calculate the attention Weights. """
     matmul_qk = tf.matmul(query, key, transpose_b=True)
 
     # scale matmul_qk

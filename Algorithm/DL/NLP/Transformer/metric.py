@@ -22,7 +22,7 @@ def loss_function(y_true, y_pred):
 def perplexity(real, pred):
     """
     This function returns the perplexity for model's predictions on a batch
-    of data in comparison with the real outputs at a timestep.
+    of Data_FCN in comparison with the real outputs at a timestep.
     Arguments:
         real: real output, a Tensorflow tensor with a shape
               of: (batch_size, max_seq_length)

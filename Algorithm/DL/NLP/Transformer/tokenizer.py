@@ -130,16 +130,16 @@ def do_tokenize(que, ans, task_func, new_tokenizer):
 
 
 if __name__ == '__main__':
-    # questions, answers = load_conversations_from_json('Data/dataset.json')
-    # questions2, answers2 = load_conversations_from_csv('Data/20200325_counsel_chat.csv')
+    # questions, answers = load_conversations_from_json('Data_TF/dataset.json')
+    # questions2, answers2 = load_conversations_from_csv('Data_TF/20200325_counsel_chat.csv')
     # questions += questions2
     # answers += answers2
-    # questions, answers = load_translation_from_lf('Data/europarl-v7.es-en.en', 'Data/europarl-v7.es-en.es')
+    # questions, answers = load_translation_from_lf('Data_TF/europarl-v7.es-en.en', 'Data_TF/europarl-v7.es-en.es')
     # questions, answers = load_translation_from_code()
-    # questions, answers = load_conversation_list_cn('Data/conv_zh.txt')
+    # questions, answers = load_conversation_list_cn('Data_TF/conv_zh.txt')
 
     q_test, a_test = [], []
-    text_dir = 'Data_xiaoice/texts'
+    text_dir = 'Data_TF_xiaoice/texts'
     files = os.listdir(text_dir)
     for file in tqdm(files):
         if file.endswith('_mat.txt'):
