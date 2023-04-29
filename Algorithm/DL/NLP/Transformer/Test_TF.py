@@ -5,7 +5,7 @@ from Model_TF.Transformer import transformer
 from Config_TF import N_LAYERS, WORD_VEC_DIM, N_HEADS, UNITS, DROP, MAX_SL, WGT_PATH
 from Load_TF import preprocess_sentence
 # noinspection PyUnresolvedReferences
-from Tokenizer import task_conv_eng, padding, task_conv_chn
+from Tokenizer_ import task_conv_eng, padding, task_conv_chn
 
 
 def evaluate(sent, trained_model, start_token, end_token, tok):
