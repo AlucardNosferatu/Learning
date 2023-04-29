@@ -9,7 +9,7 @@ from Config_TF import N_LAYERS, WORD_VEC_DIM, N_HEADS, UNITS, DROP, SET_BS, EPOC
 from Load_TF import load_translation_from_lf, load_translation_from_code, load_conversation_list_cn
 from Metrics_TF import loss_function, accuracy, perplexity
 # noinspection PyUnresolvedReferences
-from Tokenizer_ import do_tokenize, task_conv_eng, task_conv_chn
+from Tokenizer import do_tokenize, task_conv_eng, task_conv_chn
 
 tf.keras.backend.clear_session()
 
