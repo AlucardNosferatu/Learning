@@ -34,3 +34,4 @@ Algorithm/DL/CV/TumorClassification/Data/
 Algorithm/DL/PyTorch/cifar-10-batches-py/
 *.gz
 *.pth
+*migrations

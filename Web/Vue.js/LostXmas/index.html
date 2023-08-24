@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <style>
+      #canvas {
+        width: 500px;
+        height: 500px;
+        text-align: center;
+        line-height: 500px;
+        border: 1px solid #e5e5e5;
+        margin: 0 auto;
+        margin-top: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="canvas" @mousemove="updateXY">{{x}} {{y}}</div>
+    </div>
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          x: 0,
+          y: 0,
+        },
+        methods: {
+          updateXY: function (event) {
+            this.x = event.offsetX;
+            this.y = event.offsetY;
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
