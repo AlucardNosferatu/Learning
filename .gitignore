@@ -35,3 +35,4 @@ Algorithm/DL/PyTorch/cifar-10-batches-py/
 *.gz
 *.pth
 *migrations
+Algorithm/CUDA/x64/Debug/
