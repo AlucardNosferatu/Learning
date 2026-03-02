@@ -6,7 +6,7 @@ __global__ void hello_from_gpu()
     printf("Hello World!\n");
 }
 
-int main(void)
+int main_(void)
 {
     hello_from_gpu<<<2, 2>>>();
     cudaDeviceSynchronize();
