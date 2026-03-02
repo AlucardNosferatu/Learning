@@ -1,0 +1,9 @@
+﻿  Compiling CUDA source file hello_world.cu...
+  Compiling CUDA source file kernel.cu...
+  
+  C:\Users\16413\Documents\GitHub\Learning\Algorithm\CUDA>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\bin\HostX64\x64" -x cu   -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc143.pdb /FS /Zi /RTC1 /MDd " -o C:\Users\16413\Documents\GitHub\Learning\Algorithm\CUDA\x64\Debug\hello_world.cu.obj "C:\Users\16413\Documents\GitHub\Learning\Algorithm\CUDA\hello_world.cu" 
+  
+  C:\Users\16413\Documents\GitHub\Learning\Algorithm\CUDA>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\bin\HostX64\x64" -x cu   -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc143.pdb /FS /Zi /RTC1 /MDd " -o C:\Users\16413\Documents\GitHub\Learning\Algorithm\CUDA\x64\Debug\kernel.cu.obj "C:\Users\16413\Documents\GitHub\Learning\Algorithm\CUDA\kernel.cu" 
+  hello_world.cu
+  kernel.cu
+  CUDA.vcxproj -> C:\Users\16413\Documents\GitHub\Learning\Algorithm\CUDA\x64\Debug\CUDA.exe
