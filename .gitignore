@@ -1,5 +1,6 @@
 HackerNewbie/.vs/
 *.pkl
+*.exe
 .idea/
 DSAA_WXD/x64/
 DSAA_WXD/.vs/
@@ -11,3 +12,7 @@ readme/
 Spring/
 SpringBoot/
 SpringMVC/
+*.obj
+*.pdb
+*.ilk
+*.dll
