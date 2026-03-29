@@ -36,3 +36,9 @@ Algorithm/DL/PyTorch/cifar-10-batches-py/
 *.pth
 *migrations
 Algorithm/CUDA/x64/Debug/
+*.ilk
+*.obj
+*.exe
+*.dll
+*.pdb
+/Hack/InlineHook/Debug
