@@ -3,16 +3,21 @@ import time
 
 from flask import Flask
 
-from MMU import PAGE_SIZE, PAGE_TABLES, mmu_read_from_kernel, mmu_write_from_kernel
+from MMU import PAGE_SIZE, PAGE_TABLES, mmu_read_from_kernel, mmu_write_from_kernel, alloc_page_from_kernel, \
+    preorder_vpn_from_kernel, alloc_task_from_kernel
 
 # ===================== 分页内存管理常量定义 =====================
 
 CURRENT_TASK_ID = None
 
 # 任务虚拟地址
-TASK1_COUNT_VADDR = 0x0000
-TASK2_COUNT_VADDR = 0x0000
-TASK3_COUNT_VADDR = 0x0000
+TASK1_COUNT1_VADDR = 0x0000
+TASK2_COUNT1_VADDR = 0x0000
+TASK3_COUNT1_VADDR = 0x0000
+
+TASK1_COUNT2_VADDR = 0x0101
+TASK2_COUNT2_VADDR = 0x0101
+TASK3_COUNT2_VADDR = 0x0101
 
 # 动态任务字典 + 全局调度状态
 TASKS = {}
@@ -21,21 +26,19 @@ INTERRUPT_PENDING = False
 
 # ===================== MMU 初始化（修复：内核态指定任务ID） =====================
 def init_mmu():
-    """初始化：内核态调用mmu，指定from_kernel，绕过全局CURRENT_TASK_ID"""
-    # 任务ID - 页表映射（虚拟页号→物理页框）
-    PAGE_TABLES["task_1"] = {TASK1_COUNT_VADDR // PAGE_SIZE: 0}
-    PAGE_TABLES["task_2"] = {TASK2_COUNT_VADDR // PAGE_SIZE: 1}
-    PAGE_TABLES["task_3"] = {TASK3_COUNT_VADDR // PAGE_SIZE: 2}
-
-    # ✅ 修复：内核初始化时，指定任务ID，不依赖全局CURRENT_TASK_ID
-    mmu_write_from_kernel(TASK1_COUNT_VADDR, 0, task_id="task_1")
-    mmu_write_from_kernel(TASK2_COUNT_VADDR, 0, task_id="task_2")
-    mmu_write_from_kernel(TASK3_COUNT_VADDR, 0, task_id="task_3")
-
+    alloc_task_from_kernel(task_id="task_1")
+    alloc_task_from_kernel(task_id="task_2")
+    alloc_task_from_kernel(task_id="task_3")
+    preorder_vpn_from_kernel(task_id="task_1", vpn=1)
+    preorder_vpn_from_kernel(task_id="task_2", vpn=1)
+    preorder_vpn_from_kernel(task_id="task_3", vpn=1)
+    alloc_page_from_kernel("task_1", TASK1_COUNT1_VADDR // PAGE_SIZE, 0, {})
+    alloc_page_from_kernel("task_2", TASK2_COUNT1_VADDR // PAGE_SIZE, 1, {})
+    alloc_page_from_kernel("task_3", TASK3_COUNT1_VADDR // PAGE_SIZE, 2, {})
+    mmu_write_from_kernel(TASK1_COUNT1_VADDR, 0, task_id="task_1")
+    mmu_write_from_kernel(TASK2_COUNT1_VADDR, 0, task_id="task_2")
+    mmu_write_from_kernel(TASK3_COUNT1_VADDR, 0, task_id="task_3")
     print("=== MMU 分页初始化完成 ===")
-    for task_id, pt in PAGE_TABLES.items():
-        max_vpn = max(pt.keys()) if pt else "无"
-        print(f"任务[{task_id}] 页表: {pt} | 最大合法虚拟页号: {max_vpn}")
 
 
 def mmu_read_from_task(vaddr):
@@ -47,22 +50,16 @@ def mmu_write_from_task(vaddr, count):
 
 
 # ===================== 通用任务生成器 =====================
-def task_generator(task_id, vaddr):
+def task_generator(task_id, vaddr1, vaddr2):
     while True:
-        try:
-            count = mmu_read_from_task(vaddr)
-            count = count + 1 if count <= 100 else 0
-            mmu_write_from_task(vaddr, count)
-        except (PermissionError, NotImplementedError) as e:
-            # 异常捕获：便于调试，也为后续异常处理预留扩展
-            yield f"任务[{task_id}] 执行异常：{str(e)}"
-            time.sleep(0.5)
-            continue
-
+        count1 = mmu_read_from_task(vaddr1)
+        count2 = mmu_read_from_task(vaddr2)
+        count1 = count1 + 1 if count1 <= 100 else 0
+        mmu_write_from_task(vaddr1, count1)
+        count2 = count2 + 2 if count1 <= 100 else 0
+        mmu_write_from_task(vaddr2, count2)
         time.sleep(0.5)
-        current_page = vaddr // PAGE_SIZE
-        frame = PAGE_TABLES[task_id][current_page]
-        yield f"任务[{task_id}] 计数：{count} | 虚拟地址：0x{vaddr:04X} | 物理页框：{frame}"
+        yield f"任务[{task_id}] 计数1：{count1} | 计数2：{count2}"
 
 
 # ===================== 中断 & 调度 =====================
@@ -105,9 +102,9 @@ def cpu_execution_loop():
     init_mmu()
 
     # 注册动态任务
-    TASKS["task_1"] = task_generator("task_1", TASK1_COUNT_VADDR)
-    TASKS["task_2"] = task_generator("task_2", TASK2_COUNT_VADDR)
-    TASKS["task_3"] = task_generator("task_3", TASK3_COUNT_VADDR)
+    TASKS["task_1"] = task_generator("task_1", TASK1_COUNT1_VADDR, TASK1_COUNT2_VADDR)
+    TASKS["task_2"] = task_generator("task_2", TASK2_COUNT1_VADDR, TASK2_COUNT2_VADDR)
+    TASKS["task_3"] = task_generator("task_3", TASK3_COUNT1_VADDR, TASK3_COUNT2_VADDR)
 
     schedule_next_task()
 

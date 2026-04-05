@@ -1,7 +1,72 @@
+import pickle
+
 PAGE_SIZE = 0x100  # 页大小：256字节
-PAGE_FRAME_COUNT = 4  # 系统总物理页框数
-MEMORY = [{} for _ in range(PAGE_FRAME_COUNT)]
+PAGE_FRAME_COUNT = 6  # 系统总物理页框数
+MEMORY = [None for _ in range(PAGE_FRAME_COUNT)]
 PAGE_TABLES = {}
+
+
+def alloc_task_from_kernel(task_id):
+    PAGE_TABLES[task_id] = {}
+
+
+def set_frame_from_kernel(page_frame, page_dict):
+    MEMORY[page_frame] = page_dict
+
+
+def preorder_vpn_from_kernel(task_id, vpn):
+    PAGE_TABLES[task_id][vpn] = None
+
+
+def map_vpn_from_kernel(task_id, vpn, page_frame):
+    PAGE_TABLES[task_id][vpn] = page_frame
+
+
+def alloc_page_from_kernel(task_id, vpn, page_frame, page_dict):
+    preorder_vpn_from_kernel(task_id=task_id, vpn=vpn)
+    set_frame_from_kernel(page_frame=page_frame, page_dict=page_dict)
+    map_vpn_from_kernel(task_id=task_id, vpn=vpn, page_frame=page_frame)
+
+
+def _find_free_frame() -> int:
+    """
+    新增：查找空闲物理页框（空字典即为空闲）
+    仅换入，不处理页框满（后续迭代再实现换出/淘汰）
+    """
+    for idx, frame in enumerate(MEMORY):
+        if frame is None:
+            return idx
+    # 页框满：暂时抛异常，后续实现换出时修改
+    raise MemoryError("物理页框已满，无法换入新页（未实现页换出）")
+
+
+def _page_in(task_id: str, vpn: int) -> int:
+    """
+    🔥 核心新增：仅实现【页换入】，不处理换出
+    1. 从磁盘加载 pickle 文件：task_id-vpn.pkl
+    2. 分配空闲页框
+    3. 更新页表，将 None 改为实际页框号
+    返回：分配好的物理页框号
+    """
+    # 1. 分配空闲物理页框
+    frame_num = _find_free_frame()
+    # 2. 从磁盘加载页数据（文件名严格匹配：task_id-vpn.pkl）
+    filename = f"{task_id}-{vpn}.pkl"
+    try:
+        with open(filename, "rb") as f:
+            page_data = pickle.load(f)
+    except FileNotFoundError:
+        # 测试用：文件不存在则初始化空页（方便你测试）
+        page_data = {}
+
+    # 3. 将数据写入物理页框
+    set_frame_from_kernel(page_frame=frame_num, page_dict=page_data)
+
+    # 4. 更新页表：None → 实际页框号
+    map_vpn_from_kernel(task_id=task_id, vpn=vpn, page_frame=frame_num)
+
+    print(f"📥 页换入成功：任务[{task_id}] 虚拟页{vpn} → 物理页框{frame_num}")
+    return frame_num
 
 
 def _split_virtual_address(vaddr):
@@ -42,11 +107,10 @@ def _get_physical_frame(vaddr, task_id=None):
             f"任务[{task_id}] 越权访问：虚拟页号{virtual_page}超过页表最大合法值{max_vpn}"
         )
 
-    # 3. 异常2：vpn在合法范围但无映射 → 未实现外存页换入
-    if virtual_page not in current_pt:
-        raise NotImplementedError(
-            f"任务[{task_id}] 虚拟页号{virtual_page}未映射物理页框（未实现外存页换入逻辑）"
-        )
+    # 阶段2：页已换出（值为None）→ 执行【页换入】
+    if current_pt[virtual_page] is None:
+        frame_num = _page_in(task_id, virtual_page)
+        return frame_num, offset
 
     return current_pt[virtual_page], offset
 
