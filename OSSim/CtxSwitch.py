@@ -1,96 +1,63 @@
 import threading
 import time
+
 from flask import Flask
 
-# ===================== 分页内存管理常量定义 =====================
-PAGE_SIZE = 0x100  # 页大小：256字节
-PAGE_FRAME_COUNT = 4  # 系统总物理页框数
-MEMORY = [{} for _ in range(PAGE_FRAME_COUNT)]
+from MMU import PAGE_SIZE, PAGE_TABLES, mmu_read_from_kernel, mmu_write_from_kernel
 
-# 字典页表：支持动态任务增删
-PAGE_TABLES = {}
+# ===================== 分页内存管理常量定义 =====================
+
+CURRENT_TASK_ID = None
 
 # 任务虚拟地址
-TASK1_COUNT_VADDR = 0x0001
-TASK2_COUNT_VADDR = 0x0002
-TASK3_COUNT_VADDR = 0x0003
+TASK1_COUNT_VADDR = 0x0000
+TASK2_COUNT_VADDR = 0x0000
+TASK3_COUNT_VADDR = 0x0000
 
 # 动态任务字典 + 全局调度状态
 TASKS = {}
-CURRENT_TASK_ID = None
 INTERRUPT_PENDING = False
-
-
-# ===================== MMU 核心复用工具函数 =====================
-def _split_virtual_address(vaddr):
-    """复用：虚拟地址拆分 → (虚拟页号, 页内偏移)"""
-    virtual_page = vaddr // PAGE_SIZE
-    offset = vaddr % PAGE_SIZE
-    return virtual_page, offset
-
-
-def _get_physical_frame(vaddr, from_kernel=None):
-    """
-    🔥 核心复用函数：
-    1. 地址拆分
-    2. 确定当前任务ID（内核指定 / 全局调度ID）
-    3. 页表校验 + 虚拟页映射
-    4. 未映射 → 抛【未实现请求分页】异常
-    返回：(物理页框号, 页内偏移)
-    """
-    virtual_page, offset = _split_virtual_address(vaddr)
-
-    # 优先级：内核调用指定任务ID > 全局当前运行任务ID
-    task_id = from_kernel if from_kernel is not None else CURRENT_TASK_ID
-    if task_id not in PAGE_TABLES:
-        raise KeyError(f"任务[{task_id}] 不存在！")
-
-    # 页表校验（复用代码）
-    current_pt = PAGE_TABLES[task_id]
-    if virtual_page not in current_pt:
-        # 按你的要求：未实现请求分页
-        raise NotImplementedError("未实现请求分页")
-
-    return current_pt[virtual_page], offset
-
-
-# ===================== MMU 读写函数（新增from_kernel参数 + 全复用） =====================
-def mmu_read(vaddr, from_kernel=None):
-    """读内存：支持内核指定任务ID，全逻辑复用"""
-    page_frame, offset = _get_physical_frame(vaddr, from_kernel)
-    return MEMORY[page_frame].get(offset, 0)
-
-
-def mmu_write(vaddr, value, from_kernel=None):
-    """写内存：支持内核指定任务ID，全逻辑复用"""
-    page_frame, offset = _get_physical_frame(vaddr, from_kernel)
-    MEMORY[page_frame][offset] = value
 
 
 # ===================== MMU 初始化（修复：内核态指定任务ID） =====================
 def init_mmu():
     """初始化：内核态调用mmu，指定from_kernel，绕过全局CURRENT_TASK_ID"""
-    # 任务ID
+    # 任务ID - 页表映射（虚拟页号→物理页框）
     PAGE_TABLES["task_1"] = {TASK1_COUNT_VADDR // PAGE_SIZE: 0}
     PAGE_TABLES["task_2"] = {TASK2_COUNT_VADDR // PAGE_SIZE: 1}
     PAGE_TABLES["task_3"] = {TASK3_COUNT_VADDR // PAGE_SIZE: 2}
 
     # ✅ 修复：内核初始化时，指定任务ID，不依赖全局CURRENT_TASK_ID
-    mmu_write(TASK1_COUNT_VADDR, 0, from_kernel="task_1")
-    mmu_write(TASK2_COUNT_VADDR, 0, from_kernel="task_2")
-    mmu_write(TASK3_COUNT_VADDR, 0, from_kernel="task_3")
+    mmu_write_from_kernel(TASK1_COUNT_VADDR, 0, task_id="task_1")
+    mmu_write_from_kernel(TASK2_COUNT_VADDR, 0, task_id="task_2")
+    mmu_write_from_kernel(TASK3_COUNT_VADDR, 0, task_id="task_3")
 
     print("=== MMU 分页初始化完成 ===")
     for task_id, pt in PAGE_TABLES.items():
-        print(f"任务[{task_id}] 页表: {pt}")
+        max_vpn = max(pt.keys()) if pt else "无"
+        print(f"任务[{task_id}] 页表: {pt} | 最大合法虚拟页号: {max_vpn}")
+
+
+def mmu_read_from_task(vaddr):
+    return mmu_read_from_kernel(vaddr=vaddr, task_id=CURRENT_TASK_ID)
+
+
+def mmu_write_from_task(vaddr, count):
+    mmu_write_from_kernel(vaddr=vaddr, value=count, task_id=CURRENT_TASK_ID)
 
 
 # ===================== 通用任务生成器 =====================
 def task_generator(task_id, vaddr):
     while True:
-        count = mmu_read(vaddr)
-        count = count + 1 if count <= 100 else 0
-        mmu_write(vaddr, count)
+        try:
+            count = mmu_read_from_task(vaddr)
+            count = count + 1 if count <= 100 else 0
+            mmu_write_from_task(vaddr, count)
+        except (PermissionError, NotImplementedError) as e:
+            # 异常捕获：便于调试，也为后续异常处理预留扩展
+            yield f"任务[{task_id}] 执行异常：{str(e)}"
+            time.sleep(0.5)
+            continue
 
         time.sleep(0.5)
         current_page = vaddr // PAGE_SIZE
@@ -114,7 +81,7 @@ def schedule_next_task():
     task_ids = list(TASKS.keys())
     if not task_ids:
         return
-
+    task_ids: list
     if CURRENT_TASK_ID is None:
         CURRENT_TASK_ID = task_ids[0]
     else:
@@ -128,7 +95,7 @@ def on_interrupt():
     schedule_next_task()
     INTERRUPT_PENDING = False
     print(f"切换至任务: [{CURRENT_TASK_ID}]")
-    print(f"对应页表: {PAGE_TABLES[CURRENT_TASK_ID]}")
+    print(f"对应页表: {PAGE_TABLES[CURRENT_TASK_ID]} | 最大合法vpn: {max(PAGE_TABLES[CURRENT_TASK_ID].keys())}")
     print("==============================\n")
 
 
