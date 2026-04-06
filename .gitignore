@@ -1,0 +1,10 @@
+*.exe
+*.ilk
+*.obj
+*.pdb
+*.vs
+*.dll
+Debug/
+*.idea
+__pycache__/
+*.rar
